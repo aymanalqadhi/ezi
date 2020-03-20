@@ -30,7 +30,6 @@ ezi_config_parse_argv(struct ezi_config *cfg, int argc, char *argv[])
 
     argc -= 2;
     argv += 2;
-    i = 0;
 
     for (i = 0; argc--; ++i) {
         if (ezi_slist_push(&cfg->command_args, (const void *)(argv + i)) ==
