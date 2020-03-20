@@ -1,14 +1,14 @@
 #include "config.h"
+#include "log/errno.h"
 
 #include "debug.h"
 #include "ds/slist.h"
 
+#include <errno.h>
 #include <stddef.h>
 
 int
-ezi_config_parse_argv(struct ezi_config *cfg,
-                      int                argc,
-                      char *argv[])
+ezi_config_parse_argv(struct ezi_config *cfg, int argc, char *argv[])
 {
     int i;
 
@@ -16,11 +16,13 @@ ezi_config_parse_argv(struct ezi_config *cfg,
     massert(argv != NULL, "Argument vector cannot be NULL");
 
     if (argc < 2) {
-        return CONFIG_PARSE_INVALID_ARGS;
+        errno = EZI_ERR_CONFIG_INVALID_ARGS;
+        return -1;
     }
 
     if (init_ezi_slist(&cfg->command_args, sizeof(char *)) != 0) {
-        return CONFIG_PARSE_UNKNOWN_ERROR;
+        errno = EZI_ERR_CONFIG_ARGS_LIST_PARSE;
+        return -1;
     }
 
     cfg->exec_name = argv[0];
@@ -31,11 +33,14 @@ ezi_config_parse_argv(struct ezi_config *cfg,
     i = 0;
 
     for (i = 0; argc--; ++i) {
-        if (ezi_slist_push(&cfg->command_args, (const void *)(argv + i)) == NULL) {
+        if (ezi_slist_push(&cfg->command_args, (const void *)(argv + i)) ==
+            NULL) {
             free_ezi_slist(&cfg->command_args);
-            return CONFIG_PARSE_UNKNOWN_ERROR;
+
+            errno = EZI_ERR_CONFIG_ARGS_LIST_PARSE;
+            return -1;
         }
     }
 
-    return CONFIG_PARSE_SUCCESS;
+    return 0;
 }
