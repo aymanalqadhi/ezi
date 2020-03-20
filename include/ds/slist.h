@@ -5,7 +5,7 @@
 
 /* Iterates the list item-by-item starting from head */
 #define SLIST_ITERATE(sl, ptr)\
-    for (ptr = sl->head; ptr; ptr = ptr->next)
+    for (ptr = (sl)->head; ptr; ptr = ptr->next)
 
 /* Iterates the list item-by-item starting a specific node */
 #define SLIST_ITERATE_NODE(node, ptr)\
