@@ -42,12 +42,12 @@ OBJECT_EXT   ?= o
 
 # Compiler Variables
 CC           := gcc
-CC_FLAGS     := -c -I$(INCLUDE_DIR)
+CC_FLAGS     := -c -I$(INCLUDE_DIR) -Wall -pedantic
 LINK_FLAGS   :=
 
 # Validate build type, and set the compilation flags
 ifeq ($(BUILD_TYPE), Release)
-	CC_FLAGS += -O3
+	CC_FLAGS += -O3 -DNDEBUG
 else ifeq ($(BUILD_TYPE), Debug)
 	CC_FLAGS += -g
 else
@@ -68,7 +68,7 @@ TARGET_BIN   := $(BIN_DIR)/$(PROJECT_NAME)
 # Creates a directory
 # - Params:
 #   1 - The directory name
-define MKDIR = 
+define MKDIR =
 	$(NOTICE) "Creating \`$(CYAN)$(1)/$(RESET)' Directory";
 	@mkdir -p $(1)
 endef
@@ -76,7 +76,7 @@ endef
 # Removes a directory and its contents
 # - Params:
 #   1 - The directory name
-define RMDIR = 
+define RMDIR =
 	$(NOTICE) "Removing \`$(CYAN)$(1)/$(RESET)' Directory";
 	@rm -rf $(1)
 endef
@@ -86,7 +86,7 @@ endef
 # A rule to produce the final binary
 $(TARGET_BIN): $(OBJECT_FILES) $(BIN_DIR)
 	$(INFO) "Linking to \`$(BCYAN)$@$(RESET)'";
-	@$(CC) $(LINK_FLAGS) $< -o $@;
+	@$(CC) $(LINK_FLAGS) $(OBJECT_FILES) -o $@;
 	$(NOTICE) "Done"
 
 run: $(TARGET_BIN)
