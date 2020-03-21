@@ -11,6 +11,7 @@
         - Test the Binary Trees Implementation
     - Define and parse command line arguments (50%)
     - Improve the implementation of the implemented data structures
+    - Implement deletion on the implemented data structures
 
 ### DONE:
     - ~~Create basic project structure~~
