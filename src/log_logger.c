@@ -12,20 +12,14 @@
 #include <string.h>
 #include <time.h>
 
-typedef struct log_level_opts
-{
-    const char *name;
-    uint8_t     color;
-} log_level_opts_t;
-
-const static log_level_opts_t log_level_opts[7] = {
-    { .name = "fatal", .color = COMBINE_COLOR(COLOR_RED, COLOR_FLAG_BOLD) },
-    { .name = "error", .color = COLOR_RED },
-    { .name = "warn", .color = COLOR_YELLOW },
-    { .name = "info", .color = COLOR_CYAN },
-    { .name = "norm", .color = COLOR_MAGENTA },
-    { .name = "debug", .color = COLOR_BLUE },
-    { .name = "trace", .color = COMBINE_COLOR(0, COLOR_FLAG_BOLD) },
+const static char *level_labels[7] = {
+    COLORED("fatal", COLOR_BRED),
+    COLORED("error", COLOR_RED),
+    COLORED("warn", COLOR_YELLOW),
+    COLORED("info", COLOR_CYAN),
+    COLORED("norm", COLOR_MAGENTA),
+    COLORED("debug", COLOR_BLUE),
+    "trace",
 };
 
 void
@@ -34,8 +28,8 @@ log_msg(log_level_t level, const char *module, const char *fmt, ...)
     time_t     current_time;
     FILE *     log_file;
     char       time_buf[0x20];
-    struct tm *tm;
     va_list    vl;
+    struct tm *tm;
 
     current_time = time(NULL);
     log_file     = level > LOG_WARN ? stderr : stdout;
@@ -45,13 +39,7 @@ log_msg(log_level_t level, const char *module, const char *fmt, ...)
         strncpy(time_buf, "[0000-00-00 00:00:00+0000]", sizeof(time_buf));
     }
 
-    fprintf(log_file,
-            "[%s] [%s] [" COLOR_FORMAT_STR "%s" COLOR_RESET_STR "] ",
-            time_buf,
-            module,
-            GET_COLOR_FLAGS(log_level_opts[level].color),
-            GET_COLOR_COLOR(log_level_opts[level].color),
-            log_level_opts[level].name);
+    fprintf(log_file, "[%s] [%s] [%s] ",time_buf, module, level_labels[level]);
 
     va_start(vl, fmt);
     vfprintf(log_file, fmt, vl);

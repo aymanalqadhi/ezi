@@ -3,24 +3,22 @@
 
 #include <stdint.h>
 
-enum term_colors
-{
-    COLOR_RESET = 0x30,
-    COLOR_RED,
-    COLOR_GREEN,
-    COLOR_YELLOW,
-    COLOR_BLUE,
-    COLOR_MAGENTA,
-    COLOR_CYAN
-};
+#define COLOR_RESET "\033[0m"
 
-#define COLOR_FORMAT_STR "\e[%x;%xm"
-#define COLOR_RESET_STR  "\e[0m"
+#define COLOR_RED     "\033[31m"
+#define COLOR_GREEN   "\033[32m"
+#define COLOR_YELLOW  "\033[33m"
+#define COLOR_BLUE    "\033[34m"
+#define COLOR_MAGENTA "\033[35m"
+#define COLOR_CYAN    "\033[36m"
 
-#define COLOR_FLAG_BOLD 0x1
+#define COLOR_BRED     "\033[31;1m"
+#define COLOR_BGREEN   "\033[32;1m"
+#define COLOR_BYELLOW  "\033[33;1m"
+#define COLOR_BBLUE    "\033[34;1m"
+#define COLOR_BMAGENTA "\033[35;1m"
+#define COLOR_BCYAN    "\033[36;1m"
 
-#define COMBINE_COLOR(color, flags) (uint8_t)(color | (flags << 8))
-#define GET_COLOR_COLOR(color)      (color & 0xFF)
-#define GET_COLOR_FLAGS(color)      ((color >> 8) & 0xFF)
+#define COLORED(str, color) (color str COLOR_RESET)
 
 #endif /* EZDB_LOG_COLORS_H */
