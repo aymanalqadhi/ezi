@@ -34,7 +34,7 @@ log_msg(log_level_t level, const char *module, const char *fmt, ...)
     current_time = time(NULL);
     log_file     = level > LOG_WARN ? stderr : stdout;
 
-    if ((tm = localtime(&current_time)) == NULL ||
+    if (!(tm = localtime(&current_time)) ||
         strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S%z", tm) < 0) {
         strncpy(time_buf, "[0000-00-00 00:00:00+0000]", sizeof(time_buf));
     }

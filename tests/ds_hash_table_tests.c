@@ -107,7 +107,7 @@ main(int argc, char *argv[])
 {
     UNITY_BEGIN();
 
-    //RUN_TEST(&test_hash_table_initialization);
+    RUN_TEST(&test_hash_table_initialization);
     RUN_TEST(&test_hash_table);
 
     return UNITY_END();

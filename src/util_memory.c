@@ -8,7 +8,7 @@ ezi_memdup(const void *buf, size_t len)
 {
     void *tmp;
 
-    if ((tmp = malloc(len)) == NULL) {
+    if (!(tmp = malloc(len))) {
         return NULL;
     }
 

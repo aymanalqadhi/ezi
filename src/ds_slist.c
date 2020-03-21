@@ -10,7 +10,7 @@
 int
 init_ezi_slist(struct ezi_slist *sl, size_t element_size)
 {
-    if (sl == NULL) {
+    if (!sl) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
     }
@@ -28,12 +28,12 @@ create_node(const void *data, size_t len)
 {
     struct ezi_slist_node *node;
 
-    if (data == NULL) {
+    if (!data) {
         return NULL;
     } else if ((node = (struct ezi_slist_node *)malloc(sizeof(*node))) ==
                NULL) {
         return NULL;
-    } else if ((node->data = ezi_memdup(data, len)) == NULL) {
+    } else if (!(node->data = ezi_memdup(data, len))) {
         free((void *)node);
         return NULL;
     }
@@ -47,7 +47,7 @@ ezi_slist_push_no_alloc(struct ezi_slist *sl, void *data)
 {
     struct ezi_slist_node *node;
 
-    if (sl == NULL) {
+    if (!sl) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
     } else if ((node = (struct ezi_slist_node *)calloc(1, sizeof(*node))) ==
@@ -56,7 +56,7 @@ ezi_slist_push_no_alloc(struct ezi_slist *sl, void *data)
         return -1;
     }
 
-    if (sl->head == NULL && sl->tail == NULL) {
+    if (!sl->head && !sl->tail) {
         sl->head = sl->tail = node;
         sl->count           = 1;
     } else {
@@ -75,10 +75,10 @@ ezi_slist_push(struct ezi_slist *sl, const void *data)
 {
     void *tmp;
 
-    if (sl == NULL || data == NULL) {
+    if (!sl || !data) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
-    } else if ((tmp = ezi_memdup(data, sl->element_size)) == NULL) {
+    } else if (!(tmp = ezi_memdup(data, sl->element_size))) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }
@@ -94,9 +94,9 @@ ezi_slist_pop(struct ezi_slist *sl)
 
     node = NULL;
 
-    if (sl == NULL || sl->count == 0) {
+    if (!sl || sl->count == 0) {
         return NULL;
-    } else if (sl->tail != NULL) {
+    } else if (sl->tail) {
         if (sl->count > 1) {
             ptr = sl->head;
             while (ptr && ptr->next != sl->tail) {
@@ -129,7 +129,7 @@ ezi_slist_shift_no_alloc(struct ezi_slist *sl, void *data)
 {
     struct ezi_slist_node *node;
 
-    if (sl == NULL) {
+    if (!sl) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
     } else if ((node = (struct ezi_slist_node *)calloc(1, sizeof(*node))) ==
@@ -138,7 +138,7 @@ ezi_slist_shift_no_alloc(struct ezi_slist *sl, void *data)
         return -1;
     }
 
-    if (sl->head == NULL && sl->tail == NULL) {
+    if (!sl->head && !sl->tail) {
         sl->head = sl->tail = node;
         sl->count           = 1;
     } else {
@@ -157,10 +157,10 @@ ezi_slist_shift(struct ezi_slist *sl, const void *data)
 {
     void *tmp;
 
-    if (sl == NULL || data == NULL) {
+    if (!sl || !data) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
-    } else if ((tmp = ezi_memdup(data, sl->element_size)) == NULL) {
+    } else if (!(tmp = ezi_memdup(data, sl->element_size))) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }
@@ -174,9 +174,9 @@ ezi_slist_unshift(struct ezi_slist *sl)
     struct ezi_slist_node *node;
     void *                 tmp;
 
-    if (sl == NULL || sl->count == 0) {
+    if (!sl || sl->count == 0) {
         return NULL;
-    } else if (sl->head != NULL) {
+    } else if (sl->head) {
         node       = sl->head;
         sl->head   = node->next;
         node->next = NULL;

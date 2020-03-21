@@ -82,7 +82,7 @@ test_slist_pop(void)
         free_ezi_slist_node(poped_value);
     }
 
-    TEST_ASSERT(sl.head == NULL && sl.tail == NULL);
+    TEST_ASSERT(!sl.head && !sl.tail);
 }
 
 static void
@@ -123,7 +123,7 @@ test_slist_unshift(void)
         free_ezi_slist_node(unshifted_value);
     }
 
-    TEST_ASSERT(sl.head == NULL && sl.tail == NULL);
+    TEST_ASSERT(!sl.head && !sl.tail);
 }
 
 int

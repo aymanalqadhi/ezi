@@ -20,17 +20,16 @@ create_hash_table_entry(const void *key,
 {
     struct ezi_hash_table_entry *entry;
 
-    if ((entry = (struct ezi_hash_table_entry *)malloc(sizeof(*entry))) ==
-        NULL) {
+    if (!(entry = (struct ezi_hash_table_entry *)malloc(sizeof(*entry)))) {
         return NULL;
     }
 
-    if ((entry->key = ezi_memdup(key, key_size)) == NULL) {
+    if (!(entry->key = ezi_memdup(key, key_size))) {
         free(entry);
         return NULL;
     }
 
-    if ((entry->value = ezi_memdup(value, value_size)) == NULL) {
+    if (!(entry->value = ezi_memdup(value, value_size))) {
         free(entry->key);
         free(entry);
         return NULL;
@@ -47,7 +46,7 @@ init_ezi_hash_table(struct ezi_hash_table *ht,
 {
     int i;
 
-    if (ht == NULL) {
+    if (!ht) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
     }
@@ -55,8 +54,8 @@ init_ezi_hash_table(struct ezi_hash_table *ht,
     buckets_count = buckets_count > 0 ? buckets_count
                                       : DEFAULT_HASH_TABLE_BUCKETS;
 
-    if ((ht->buckets = calloc(ht->buckets_count = buckets_count,
-                              sizeof(*ht->buckets))) == NULL) {
+    if (!(ht->buckets = calloc(ht->buckets_count = buckets_count,
+                               sizeof(*ht->buckets)))) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }
@@ -85,10 +84,10 @@ ezi_hash_table_get(struct ezi_hash_table *ht, const void *key, void **value_ptr)
     struct ezi_hash_table_entry *entry;
     struct ezi_slist_node *      node;
 
-    if (ht == NULL || key == NULL || value_ptr == NULL) {
+    if (!ht || !key || !value_ptr) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
-    } else if (ht->buckets == NULL) {
+    } else if (!ht->buckets) {
         errno = EZI_ERR_UNINITIALIZED_DATA;
         return -1;
     } else if (ht->count == 0) {
@@ -120,10 +119,10 @@ ezi_hash_table_set(struct ezi_hash_table *ht,
     struct ezi_hash_table_entry *entry;
     struct ezi_slist_node *      node;
 
-    if (ht == NULL || key == NULL || value == NULL) {
+    if (!ht || !key || !value) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
-    } else if (ht->buckets == NULL) {
+    } else if (!ht->buckets) {
         errno = EZI_ERR_UNINITIALIZED_DATA;
         return -1;
     }
@@ -144,8 +143,8 @@ ezi_hash_table_set(struct ezi_hash_table *ht,
     }
 
 new_entry:
-    if ((entry = create_hash_table_entry(
-             key, ht->key_size, value, ht->value_size)) == NULL) {
+    if (!(entry = create_hash_table_entry(
+              key, ht->key_size, value, ht->value_size))) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }
@@ -165,10 +164,10 @@ ezi_hash_table_has_key(struct ezi_hash_table *ht, const void *key)
     struct ezi_hash_table_entry *entry;
     struct ezi_slist_node *      node;
 
-    if (ht == NULL || key == NULL) {
+    if (!ht || !key) {
         errno = EZI_ERR_NULL_ARGUMENTS;
         return -1;
-    } else if (ht->buckets == NULL) {
+    } else if (!ht->buckets) {
         errno = EZI_ERR_UNINITIALIZED_DATA;
         return -1;
     }

@@ -11,7 +11,6 @@
         - Test the Binary Trees Implementation
     - Define and parse command line arguments (50%)
     - Improve the implementation of the implemented data structures
-    - Replace `ptr == NULL', `ptr != NULL' expressions with `ptr', `!ptr'
 
 ### DONE:
     - ~~Create basic project structure~~
@@ -24,3 +23,4 @@
         - ~~Test the Hash Tables Implementation~~
     - ~~Implement error reporting system~~
     - ~~Use the error reporting system in the implemented data structres~~
+    - ~~Replace `ptr == NULL', `ptr != NULL' expressions with `ptr', `!ptr'~~
