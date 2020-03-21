@@ -4,26 +4,23 @@
 #include <stddef.h>
 
 /* Iterates the list item-by-item starting from head */
-#define SLIST_ITERATE(sl, ptr)\
-    for (ptr = (sl)->head; ptr; ptr = ptr->next)
+#define SLIST_ITERATE(sl, ptr) for (ptr = (sl)->head; ptr; ptr = ptr->next)
 
 /* Iterates the list item-by-item starting a specific node */
-#define SLIST_ITERATE_NODE(node, ptr)\
-    for (ptr = node; ptr; ptr = ptr->next)
+#define SLIST_ITERATE_NODE(node, ptr) for (ptr = node; ptr; ptr = ptr->next)
 
 /* Gets the value of the first node (head) */
-#define SLIST_FIRST(sl, type)\
-    ((sl)->head ? ((type)(sl)->head->data) : NULL)
+#define SLIST_FIRST(sl, type) ((sl)->head ? ((type)(sl)->head->data) : NULL)
 
 /* Gets the value of the last node (tail) */
-#define SLIST_LAST(sl, type)\
-    ((sl)->tail ? ((type)(sl)->tail->data) : NULL)
+#define SLIST_LAST(sl, type) ((sl)->tail ? ((type)(sl)->tail->data) : NULL)
 
-#define SLIST_VALID(sl)\
-    (!(!sl->head ^ !sl->tail) && !(!sl->head && !sl->tail && sl->__count > 0))
+#define SLIST_VALID(sl)                                                        \
+    (!(!(sl)->head ^ !(sl)->tail) &&                                           \
+     !(!(sl)->head && !(sl)->tail && (sl)->count > 0))
 
 /* Gets the current length of the linked list */
-#define SLIST_COUNT(sl) (sl->__count)
+#define SLIST_COUNT(sl) ((sl)->count)
 
 struct ezi_slist_node
 {
@@ -33,8 +30,8 @@ struct ezi_slist_node
 
 struct ezi_slist
 {
-    size_t __count;
-    size_t __element_size;
+    size_t count;
+    size_t element_size;
 
     struct ezi_slist_node *head;
     struct ezi_slist_node *tail;
@@ -51,8 +48,21 @@ int
 init_ezi_slist(struct ezi_slist *sl, size_t element_size);
 
 /*!
+ * \biref Pushes an item to the end (tail) of the list
+ *
+ * \param [in] sl    The list to push this item onto
+ * \param [in] data  The item to push
+ * \return 0 on success, -1 otherwise with errno set
+ */
+int
+ezi_slist_push_no_alloc(struct ezi_slist *sl, void *data);
+
+/*!
  * \brief Pushes an item to the end (tail) of the list
  *
+ * this function is the same as \see ezi_slist_push_no_alloc, but the data
+ * gets copied into a malloced buffer
+ * 
  * \param [in] sl    The list to push this item onto
  * \param [in] data  The item to push
  * \return 0 on success, -1 otherwise with errno set
@@ -73,6 +83,19 @@ ezi_slist_pop(struct ezi_slist *sl);
 /*!
  * \brief Inserts an item to the begining (head) of the list
  *
+ * \param [in] sl    The list to insert this item into
+ * \param [in] data  The item to insert
+ * \return 0 on success, -1 otherwise with errno set
+ */
+int
+ezi_slist_shift_no_alloc(struct ezi_slist *sl, void *data);
+
+/*!
+ * \brief Inserts an item to the begining (head) of the list
+ *
+ * this function is the same as \see ezi_slist_shift_no_alloc, but the data
+ * gets copied into a malloced buffer
+ * 
  * \param [in] sl    The list to insert this item into
  * \param [in] data  The item to insert
  * \return 0 on success, -1 otherwise with errno set
