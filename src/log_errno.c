@@ -3,8 +3,12 @@
 #include <errno.h>
 #include <string.h>
 
-static const char *ezi_errors[EZI_ERR_LAST_MARKER - 2] = 
-{
+#define EZI_ERRORS_COUNT (EZI_ERR_LAST_MARKER - EZI_ERR_FIRST_MARKER - 1)
+
+static const char *ezi_errors[EZI_ERRORS_COUNT] = {
+    "NULL arguments were passed",
+    "Could not allocate memory",
+    "Unintialized data was used",
     "Invalid command line arguments",
     "Could not parse arguments list"
 };
