@@ -8,5 +8,5 @@ include_directories(../include/)
 add_subdirectory(Unity/)
 
 # Tests Targets
-add_executable(ds_slist_tests ds_slist_tests.c ../src/ds_slist.c)
+add_executable(ds_slist_tests ds_slist_tests.c ../src/ds_slist.c ../src/memory.c)
 target_link_libraries(ds_slist_tests unity)

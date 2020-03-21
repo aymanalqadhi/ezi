@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
 
@@ -22,19 +23,24 @@ tearDown(void)
 static void
 test_slist_initialization(void)
 {
+    errno = 0;
+
     TEST_ASSERT_EQUAL(0, init_ezi_slist(&sl, sizeof(short)));
+    TEST_ASSERT_EQUAL(0, errno);
     TEST_ASSERT_EQUAL(sizeof(short), sl.__element_size);
     TEST_ASSERT_EQUAL(0, sl.count);
     TEST_ASSERT_NULL(sl.head);
     TEST_ASSERT_NULL(sl.tail);
 
     TEST_ASSERT_EQUAL(0, init_ezi_slist(&sl, sizeof(int)));
+    TEST_ASSERT_EQUAL(0, errno);
     TEST_ASSERT_EQUAL(sizeof(int), sl.__element_size);
     TEST_ASSERT_EQUAL(0, sl.count);
     TEST_ASSERT_NULL(sl.head);
     TEST_ASSERT_NULL(sl.tail);
 
     TEST_ASSERT_EQUAL(0, init_ezi_slist(&sl, sizeof(double)));
+    TEST_ASSERT_EQUAL(0, errno);
     TEST_ASSERT_EQUAL(sizeof(double), sl.__element_size);
     TEST_ASSERT_EQUAL(0, sl.count);
     TEST_ASSERT_NULL(sl.head);
@@ -45,11 +51,16 @@ static void
 test_slist_push(void)
 {
     TEST_TYPE i;
+    int       rc;
+
+    errno = 0;
 
     TEST_ASSERT_EQUAL(0, init_ezi_slist(&sl, sizeof(i)));
 
     for (i = 1; i <= TEST_ITERATIONS; ++i) {
-        ezi_slist_push(&sl, &i);
+        rc = ezi_slist_push(&sl, &i);
+        TEST_ASSERT_EQUAL(0, errno);
+        TEST_ASSERT_EQUAL(0, rc);
         TEST_ASSERT_EQUAL(i, sl.count);
         TEST_ASSERT_EQUAL(i, *SLIST_LAST(&sl, TEST_TYPE *));
     }
@@ -60,15 +71,15 @@ test_slist_push(void)
 static void
 test_slist_pop(void)
 {
-    TEST_TYPE              i, *val;
-    struct ezi_slist_node *node;
+    TEST_TYPE i, *val;
+    void *    poped_value;
 
     for (i = sl.count; i > 0; --i) {
         TEST_ASSERT_EQUAL(i, *SLIST_LAST(&sl, TEST_TYPE *));
-        node = ezi_slist_pop(&sl);
-        TEST_ASSERT_NOT_NULL(node);
-        TEST_ASSERT_EQUAL(*(TEST_TYPE *)node->data, i);
-        free_ezi_slist_node(node);
+        poped_value = ezi_slist_pop(&sl);
+        TEST_ASSERT_NOT_NULL(poped_value);
+        TEST_ASSERT_EQUAL(*(TEST_TYPE *)poped_value, i);
+        free_ezi_slist_node(poped_value);
     }
 
     TEST_ASSERT(sl.head == NULL && sl.tail == NULL);
@@ -78,12 +89,19 @@ static void
 test_slist_shift(void)
 {
     TEST_TYPE i;
+    int       rc;
+
+    errno = 0;
+    rc    = init_ezi_slist(&sl, sizeof(i));
 
     TEST_ASSERT_EQUAL(0, sl.count);
-    TEST_ASSERT_EQUAL(0, init_ezi_slist(&sl, sizeof(i)));
+    TEST_ASSERT_EQUAL(0, rc);
+    TEST_ASSERT_EQUAL(0, errno);
 
     for (i = 1; i <= TEST_ITERATIONS; ++i) {
-        ezi_slist_shift(&sl, &i);
+        rc = ezi_slist_shift(&sl, &i);
+        TEST_ASSERT_EQUAL(0, rc);
+        TEST_ASSERT_EQUAL(0, errno);
         TEST_ASSERT_EQUAL(i, sl.count);
         TEST_ASSERT_EQUAL(i, *SLIST_FIRST(&sl, TEST_TYPE *));
     }
@@ -94,15 +112,15 @@ test_slist_shift(void)
 static void
 test_slist_unshift(void)
 {
-    TEST_TYPE              i, *val;
-    struct ezi_slist_node *node;
+    TEST_TYPE i, *val;
+    void *    unshifted_value;
 
     for (i = sl.count; i > 0; --i) {
         TEST_ASSERT_EQUAL(i, *SLIST_FIRST(&sl, TEST_TYPE *));
-        node = ezi_slist_unshift(&sl);
-        TEST_ASSERT_NOT_NULL(node);
-        TEST_ASSERT_EQUAL(*(TEST_TYPE *)node->data, i);
-        free_ezi_slist_node(node);
+        unshifted_value = ezi_slist_unshift(&sl);
+        TEST_ASSERT_NOT_NULL(unshifted_value);
+        TEST_ASSERT_EQUAL(*(TEST_TYPE *)unshifted_value, i);
+        free_ezi_slist_node(unshifted_value);
     }
 
     TEST_ASSERT(sl.head == NULL && sl.tail == NULL);
