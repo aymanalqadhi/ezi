@@ -1,18 +1,23 @@
 #include "ds/slist.h"
 
-#include "debug.h"
+#include "log/errno.h"
+#include "util/memory.h"
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
 int
 init_ezi_slist(struct ezi_slist *sl, size_t element_size)
 {
-    assert(sl != NULL);
+    if (sl == NULL) {
+        errno = EZI_ERR_NULL_ARGUMENTS;
+        return -1;
+    }
 
     sl->head           = NULL;
     sl->tail           = NULL;
-    sl->count          = 0;
+    sl->__count          = 0;
     sl->__element_size = element_size;
 
     return 0;
@@ -23,57 +28,57 @@ create_node(const void *data, size_t len)
 {
     struct ezi_slist_node *node;
 
-    massert(data != NULL, "Node Data Cannot be NULL");
-
-    if ((node = (struct ezi_slist_node *)malloc(sizeof(*node))) == NULL) {
+    if (data == NULL) {
         return NULL;
-    } else if ((node->data = malloc(len)) == NULL) {
+    } else if ((node = (struct ezi_slist_node *)malloc(sizeof(*node))) ==
+               NULL) {
+        return NULL;
+    } else if ((node->data = ezi_memdup(data, len)) == NULL) {
         free((void *)node);
         return NULL;
     }
 
     node->next = NULL;
-    memcpy(node->data, data, len);
-
     return node;
 }
 
-struct ezi_slist_node *
+int
 ezi_slist_push(struct ezi_slist *sl, const void *data)
 {
     struct ezi_slist_node *node;
 
-    massert(sl != NULL, "The list cannot be NULL");
-    massert(data != NULL, "The data cannot be NULL");
-    massert(SLIST_VALID(sl), "Invalid List");
-
-    if ((node = create_node(data, sl->__element_size)) == NULL) {
-        return NULL;
+    if (sl == NULL || data == NULL) {
+        errno = EZI_ERR_NULL_ARGUMENTS;
+        return -1;
+    } else if ((node = create_node(data, sl->__element_size)) == NULL) {
+        errno = EZI_ERR_MEMORY_ALLOC_FAILED;
+        return -1;
     }
 
     if (sl->head == NULL && sl->tail == NULL) {
         sl->head = sl->tail = node;
-        sl->count           = 1;
+        sl->__count           = 1;
     } else {
         sl->tail->next = node;
         sl->tail       = node;
-        ++sl->count;
+        ++sl->__count;
     }
 
-    return node;
+    return 0;
 }
 
-struct ezi_slist_node *
+void *
 ezi_slist_pop(struct ezi_slist *sl)
 {
     struct ezi_slist_node *node, *ptr;
+    void *                 tmp;
 
-    massert(sl != NULL, "The list cannot be NULL");
+    node = NULL;
 
-    if (sl->count == 0) {
+    if (sl == NULL || sl->__count == 0) {
         return NULL;
     } else if (sl->tail != NULL) {
-        if (sl->count > 1) {
+        if (sl->__count > 1) {
             ptr = sl->head;
             while (ptr && ptr->next != sl->tail) {
                 ptr = ptr->next;
@@ -83,64 +88,69 @@ ezi_slist_pop(struct ezi_slist *sl)
                 node      = ptr->next;
                 ptr->next = NULL;
                 sl->tail  = ptr;
-
-                return node;
             }
         } else {
-            ptr       = sl->tail;
-            ptr->next = sl->head = sl->tail = NULL;
-            sl->count                       = 0;
-            return ptr;
+            node       = sl->tail;
+            node->next = sl->head = sl->tail = NULL;
+            sl->__count                        = 0;
         }
+    }
+
+    if (node) {
+        tmp = node->data;
+        free(node);
+        return tmp;
     }
 
     return NULL;
 }
 
-struct ezi_slist_node *
+int
 ezi_slist_shift(struct ezi_slist *sl, const void *data)
 {
     struct ezi_slist_node *node;
 
-    massert(sl != NULL, "The list cannot be NULL");
-    massert(data != NULL, "The data cannot be NULL");
-    massert(SLIST_VALID(sl), "Invalid List");
-
-    if ((node = create_node(data, sl->__element_size)) == NULL) {
-        return NULL;
+    if (sl == NULL || data == NULL) {
+        errno = EZI_ERR_NULL_ARGUMENTS;
+        return -1;
+    } else if ((node = create_node(data, sl->__element_size)) == NULL) {
+        errno = EZI_ERR_MEMORY_ALLOC_FAILED;
+        return -1;
     }
 
     if (sl->head == NULL && sl->tail == NULL) {
         sl->head = sl->tail = node;
-        sl->count           = 1;
+        sl->__count           = 1;
     } else {
         node->next = sl->head;
         sl->head   = node;
-        ++sl->count;
+        ++sl->__count;
     }
 
-    return node;
+    return 0;
 }
 
-struct ezi_slist_node *
+void *
 ezi_slist_unshift(struct ezi_slist *sl)
 {
     struct ezi_slist_node *node;
+    void *                 tmp;
 
-    massert(sl != NULL, "The list cannot be NULL");
-
-    if (sl->count == 0) {
+    if (sl == NULL || sl->__count == 0) {
         return NULL;
     } else if (sl->head != NULL) {
         node       = sl->head;
         sl->head   = node->next;
         node->next = NULL;
 
-        if (sl->count-- == 0) {
+        if (sl->__count-- == 0) {
             sl->head = sl->tail = NULL;
         }
 
-        return node;
+        tmp = node->data;
+        free(node);
+
+        return tmp;
     }
 
     return NULL;
@@ -149,9 +159,6 @@ ezi_slist_unshift(struct ezi_slist *sl)
 inline void
 free_ezi_slist_node(struct ezi_slist_node *node)
 {
-    massert(node != NULL, "The node cannot be NULL");
-    massert(node->data != NULL, "The data cannot be NULL");
-
     free(node->data);
     free(node);
 }
@@ -161,8 +168,6 @@ free_ezi_slist(struct ezi_slist *sl)
 {
     struct ezi_slist_node *ptr, *tmp;
 
-    massert(sl != NULL, "The list cannot be NULL");
-
     for (ptr = sl->head; ptr;) {
         tmp = ptr;
         ptr = ptr->next;
@@ -170,5 +175,5 @@ free_ezi_slist(struct ezi_slist *sl)
     }
 
     sl->head = sl->tail = NULL;
-    sl->count = sl->__element_size = 0;
+    sl->__count = sl->__element_size = 0;
 }

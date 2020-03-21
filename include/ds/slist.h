@@ -20,7 +20,10 @@
     ((sl)->tail ? ((type)(sl)->tail->data) : NULL)
 
 #define SLIST_VALID(sl)\
-    (!(!sl->head ^ !sl->tail) && !(!sl->head && !sl->tail && sl->count > 0))
+    (!(!sl->head ^ !sl->tail) && !(!sl->head && !sl->tail && sl->__count > 0))
+
+/* Gets the current length of the linked list */
+#define SLIST_COUNT(sl) (sl->__count)
 
 struct ezi_slist_node
 {
@@ -30,8 +33,8 @@ struct ezi_slist_node
 
 struct ezi_slist
 {
+    size_t __count;
     size_t __element_size;
-    size_t count;
 
     struct ezi_slist_node *head;
     struct ezi_slist_node *tail;
@@ -42,7 +45,7 @@ struct ezi_slist
  *
  * \param [in,out] sl            A pointer to the list to initialize
  * \param [in]     element_size  The element size to use
- * \return 0 on success, -1 otherwise
+ * \return 0 on success, -1 otherwise with errno set
  */
 int
 init_ezi_slist(struct ezi_slist *sl, size_t element_size);
@@ -52,9 +55,9 @@ init_ezi_slist(struct ezi_slist *sl, size_t element_size);
  *
  * \param [in] sl    The list to push this item onto
  * \param [in] data  The item to push
- * \return The pushed item on success, NULL otherwise
+ * \return 0 on success, -1 otherwise with errno set
  */
-struct ezi_slist_node *
+int
 ezi_slist_push(struct ezi_slist *sl, const void *data);
 
 /*!
@@ -64,7 +67,7 @@ ezi_slist_push(struct ezi_slist *sl, const void *data);
  * \param [in] sl  The list to pop the item from
  * \return The poped item, NULL if the list is empty
  */
-struct ezi_slist_node *
+void *
 ezi_slist_pop(struct ezi_slist *sl);
 
 /*!
@@ -72,9 +75,9 @@ ezi_slist_pop(struct ezi_slist *sl);
  *
  * \param [in] sl    The list to insert this item into
  * \param [in] data  The item to insert
- * \return The pushed item on success, NULL otherwise
+ * \return 0 on success, -1 otherwise with errno set
  */
-struct ezi_slist_node *
+int
 ezi_slist_shift(struct ezi_slist *sl, const void *data);
 
 /*!
@@ -85,7 +88,7 @@ ezi_slist_shift(struct ezi_slist *sl, const void *data);
  * \param [in] sl  The list to remove the item from
  * \return The removed item, NULL if the list is empty
  */
-struct ezi_slist_node *
+void *
 ezi_slist_unshift(struct ezi_slist *sl);
 
 /*!
