@@ -2,7 +2,9 @@
 #define EZI_LOG_LOGGER_H
 
 #include "config.h"
+#include "log/errno.h"
 
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -33,5 +35,11 @@ log_msg(log_level_t level, const char *module, const char *fmt, ...);
 #define log_norm(m, fmt, ...)  log_msg(LOG_NORM, m, fmt, ##__VA_ARGS__)
 #define log_debug(m, fmt, ...) log_msg(LOG_DEBUG, m, fmt, ##__VA_ARGS__)
 #define log_trace(m, fmt, ...) log_msg(LOG_TRACE, m, fmt, ##__VA_ARGS__)
+#define log_wperror(m, func)                                                   \
+    log_msg(LOG_WARN, m, "%s: %s", func, ezi_strerror(errno));
+#define log_perror(m, func)                                                    \
+    log_msg(LOG_ERROR, m, "%s: %s", func, ezi_strerror(errno));
+#define log_fperror(m, func)                                                   \
+    log_msg(LOG_FATAL, m, "%s: %s", func, ezi_strerror(errno));
 
 #endif /* EZI_LOG_LOGGER_H */
