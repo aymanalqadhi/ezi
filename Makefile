@@ -83,7 +83,7 @@ endef
 ############################[  BUILD RULES ]####################################
 
 # A rule to produce the final binary
-$(TARGET_BIN): $(OBJECT_FILES) $(BIN_DIR)
+$(TARGET_BIN): $(BUILD_DIR) $(OBJECT_FILES) $(BIN_DIR)
 	$(INFO) "Linking to \`$(BCYAN)$@$(RESET)'";
 	@$(CC) $(LINK_FLAGS) $(OBJECT_FILES) -o $@;
 	$(NOTICE) "Done"
@@ -93,7 +93,7 @@ run: $(TARGET_BIN)
 	@./$<
 
 # A rule to compile individual source files
-$(BUILD_DIR)/%.$(OBJECT_EXT): $(SRC_DIR)/%.$(SOURCE_EXT) $(BUILD_DIR)
+$(BUILD_DIR)/%.$(OBJECT_EXT): $(SRC_DIR)/%.$(SOURCE_EXT)
 	$(INFO) "Compiling source \`$(CYAN)$<$(RESET)' to \`$(MAGENTA)$@$(RESET)'";
 	@$(CC) $(CC_FLAGS) -o $@ $<;
 
