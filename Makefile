@@ -57,8 +57,7 @@ build_type_error:
 endif
 
 # Project Files
-SOURCE_FILES := $(wildcard $(SRC_DIR)/*.$(SOURCE_EXT) \
-				$(SRC_DIR)/*/*.$(SOURCE_EXT))
+SOURCE_FILES := $(wildcard $(SRC_DIR)/*.$(SOURCE_EXT))
 OBJECT_FILES := $(patsubst $(SRC_DIR)/%.$(SOURCE_EXT),\
 				$(BUILD_DIR)/%.$(OBJECT_EXT), $(SOURCE_FILES))
 TARGET_BIN   := $(BIN_DIR)/$(PROJECT_NAME)
@@ -107,10 +106,7 @@ $(BIN_DIR):
 	$(call MKDIR,$(BIN_DIR));
 
 # A rule to clean up build files
+.PHONY: clean
 clean:
 	$(call RMDIR,$(BUILD_DIR));
 	$(call RMDIR,$(BIN_DIR));
-
-.PHONY: $(BIN_DIR)
-.PHONY: $(BUILD_DIR)
-.PHONY: clean
