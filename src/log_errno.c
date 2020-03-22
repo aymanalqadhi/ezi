@@ -9,8 +9,11 @@ static const char *ezi_errors[EZI_ERRORS_COUNT] = {
     "NULL arguments were passed",
     "Could not allocate memory",
     "Unintialized data was used",
+    "No such command",
+    "Command return with an error",
     "Invalid command line arguments",
-    "Could not parse arguments list"
+    "Could not parse arguments list",
+    "Initialization failed"
 };
 
 const char *
