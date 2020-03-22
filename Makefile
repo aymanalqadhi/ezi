@@ -89,7 +89,7 @@ $(TARGET_BIN): $(BUILD_DIR) $(OBJECT_FILES) $(BIN_DIR)
 	$(NOTICE) "Done"
 
 run: $(TARGET_BIN)
-	$(DEBUG) "Executing \`$(BCYAN)$<$(RESET)<'\n";
+	$(DEBUG) "> Executing \`$(BCYAN)$<$(RESET)'\n";
 	@./$<
 
 # A rule to compile individual source files
