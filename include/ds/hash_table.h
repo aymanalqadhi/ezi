@@ -95,7 +95,7 @@ ezi_hash_table_remove(struct ezi_hash_table *ht, const void *key);
  * \param [in]  ht  A pointer to the hash table
  */
 void
-free_hash_table(struct ezi_hash_table *ht);
+free_ezi_hash_table(struct ezi_hash_table *ht);
 
 /*!
  * \briref Glenn Fowler, Phong Vo, and Landon Curt hash function
