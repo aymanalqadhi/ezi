@@ -26,4 +26,11 @@ struct ezi_config
 int
 ezi_config_parse_argv(struct ezi_config *cfg, int argc, char *argv[]);
 
+/*!
+ * \brief Frees resources used by the configuration object
+ * \param [in] cfg  A pointer to the configuration object to free
+ */
+void
+free_ezi_config(struct ezi_config *cfg);
+
 #endif /* EZI_CONFIG_H */

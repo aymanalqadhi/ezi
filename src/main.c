@@ -18,7 +18,7 @@ main(int argc, char *argv[])
     }
 
     log_info("main", "Run normally");
-    free_ezi_slist(&cfg.command_args);
+    free_ezi_config(&cfg);
 
     return 0;
 }

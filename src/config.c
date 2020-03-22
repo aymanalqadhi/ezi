@@ -37,3 +37,9 @@ ezi_config_parse_argv(struct ezi_config *cfg, int argc, char *argv[])
 
     return 0;
 }
+
+void
+free_ezi_config(struct ezi_config *cfg)
+{
+    free_ezi_slist(&cfg->command_args);
+}
