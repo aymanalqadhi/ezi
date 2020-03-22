@@ -1,24 +1,20 @@
-#include "config.h"
+#include "app.h"
 #include "log/logger.h"
-#include "log/errno.h"
-#include "util/reflection.h"
 
-#include <errno.h>
-#include <stdio.h>
+#include <stdlib.h>
 
 int
 main(int argc, char *argv[])
 {
-    int               rc;
-    struct ezi_config cfg;
+    int ret_code;
 
-    if ((rc = ezi_config_parse_argv(&cfg, argc, argv)) != 0) {
-        log_fperror("main", ezi_nameof(ezi_config_parse_argv));
-        return 1;
+    ret_code = EXIT_SUCCESS;
+
+    if (ezi_app_run(argc, argv) != 0) {
+        log_fperror("main", "ezi_app_run");
+        ret_code = EXIT_FAILURE;
     }
 
-    log_info("main", "Run normally");
-    free_ezi_config(&cfg);
-
-    return 0;
+    ezi_app_destroy();
+    return ret_code;
 }
