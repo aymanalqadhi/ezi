@@ -11,8 +11,15 @@
         - Test the Binary Trees Implementation
     - Define and parse command line arguments (50%)
     - Improve the implementation of the implemented data structures
+    - Implement basic database functionality
     - Implement deletion on the implemented data structures
-    - Implement a basic commands system
+    - Implement installation setup command
+    - Implement installation from url command
+    - Implement available software browsing command
+    - Implement installed software browsing command
+    - Implement installtation from source command
+    - Implement software reinstalltion command
+    - Implement software uninstallation command
 
 ### DONE:
     - ~~Create basic project structure~~
@@ -27,3 +34,4 @@
     - ~~Use the error reporting system in the implemented data structres~~
     - ~~Replace `ptr == NULL', `ptr != NULL' expressions with `ptr', `!ptr'~~
     - ~~Move the startup logic to separate functions~~
+    - ~~Implement a basic commands system~~
