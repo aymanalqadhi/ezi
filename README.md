@@ -12,6 +12,8 @@
     - Define and parse command line arguments (50%)
     - Improve the implementation of the implemented data structures
     - Implement deletion on the implemented data structures
+    - Move the startup logic to separate functions
+    - Implement a basic commands system
 
 ### DONE:
     - ~~Create basic project structure~~
