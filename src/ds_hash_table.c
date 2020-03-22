@@ -16,27 +16,7 @@ static struct ezi_hash_table_entry *
 create_hash_table_entry(const void *key,
                         size_t      key_size,
                         const void *value,
-                        size_t      value_size)
-{
-    struct ezi_hash_table_entry *entry;
-
-    if (!(entry = (struct ezi_hash_table_entry *)malloc(sizeof(*entry)))) {
-        return NULL;
-    }
-
-    if (!(entry->key = ezi_memdup(key, key_size))) {
-        free(entry);
-        return NULL;
-    }
-
-    if (!(entry->value = ezi_memdup(value, value_size))) {
-        free(entry->key);
-        free(entry);
-        return NULL;
-    }
-
-    return entry;
-}
+                        size_t      value_size);
 
 int
 init_ezi_hash_table(struct ezi_hash_table *ht,
@@ -186,7 +166,7 @@ ezi_hash_table_has_key(struct ezi_hash_table *ht, const void *key)
 }
 
 void
-free_hash_table(struct ezi_hash_table *ht)
+free_ezi_hash_table(struct ezi_hash_table *ht)
 {
     struct ezi_hash_table_entry *entry;
     struct ezi_slist_node *      node;
@@ -243,4 +223,30 @@ ezi_djb_hash(const void *data, size_t len)
     }
 
     return hash;
+}
+
+static struct ezi_hash_table_entry *
+create_hash_table_entry(const void *key,
+                        size_t      key_size,
+                        const void *value,
+                        size_t      value_size)
+{
+    struct ezi_hash_table_entry *entry;
+
+    if (!(entry = (struct ezi_hash_table_entry *)malloc(sizeof(*entry)))) {
+        return NULL;
+    }
+
+    if (!(entry->key = ezi_memdup(key, key_size))) {
+        free(entry);
+        return NULL;
+    }
+
+    if (!(entry->value = ezi_memdup(value, value_size))) {
+        free(entry->key);
+        free(entry);
+        return NULL;
+    }
+
+    return entry;
 }

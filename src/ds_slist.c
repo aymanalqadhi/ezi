@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+static inline struct ezi_slist_node *
+create_node(const void *data, size_t len);
+
 int
 init_ezi_slist(struct ezi_slist *sl, size_t element_size)
 {
@@ -21,25 +24,6 @@ init_ezi_slist(struct ezi_slist *sl, size_t element_size)
     sl->element_size = element_size;
 
     return 0;
-}
-
-static inline struct ezi_slist_node *
-create_node(const void *data, size_t len)
-{
-    struct ezi_slist_node *node;
-
-    if (!data) {
-        return NULL;
-    } else if ((node = (struct ezi_slist_node *)malloc(sizeof(*node))) ==
-               NULL) {
-        return NULL;
-    } else if (!(node->data = ezi_memdup(data, len))) {
-        free((void *)node);
-        return NULL;
-    }
-
-    node->next = NULL;
-    return node;
 }
 
 int
@@ -213,4 +197,23 @@ free_ezi_slist(struct ezi_slist *sl)
     }
 
     memset(sl, 0, sizeof(*sl));
+}
+
+static inline struct ezi_slist_node *
+create_node(const void *data, size_t len)
+{
+    struct ezi_slist_node *node;
+
+    if (!data) {
+        return NULL;
+    } else if ((node = (struct ezi_slist_node *)malloc(sizeof(*node))) ==
+               NULL) {
+        return NULL;
+    } else if (!(node->data = ezi_memdup(data, len))) {
+        free((void *)node);
+        return NULL;
+    }
+
+    node->next = NULL;
+    return node;
 }
