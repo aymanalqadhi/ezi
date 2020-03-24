@@ -20,11 +20,15 @@
     - Implement installtation from source command
     - Implement software reinstalltion command
     - Implement software uninstallation command
+    - Implement and test an *I/O abstraction layer
+        - Endianness handling functions
+        - Read/Write functions for raw buffers and strings
+        - Read/Write functions for the integer values of all sizes
 
 ### DONE:
     - ~~Create basic project structure~~
     - ~~Create "Hello, World!" main function~~
-    - Implement common data structures
+    - ~~Implement common data structures~~
         - ~~Implement Singly Linked-Lists~~
         - ~~Implement Hashs Table~~
     - Test the implemented data structures
