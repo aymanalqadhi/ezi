@@ -20,6 +20,7 @@
     - Implement installtation from source command
     - Implement software reinstalltion command
     - Implement software uninstallation command
+    - Use the new NULL arguments validation macros
 
 ### DONE:
     - ~~Create basic project structure~~
