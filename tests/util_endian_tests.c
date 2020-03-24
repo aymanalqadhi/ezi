@@ -1,4 +1,4 @@
-#include "util/endian.h"
+#include "io/endian.h"
 
 #include "unity.h"
 
@@ -82,7 +82,7 @@ test_big_endian_to_host(void)
     }
 }
 
-extern int
+int
 main(int argc, char *argv[])
 {
     UNITY_BEGIN();
