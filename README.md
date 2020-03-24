@@ -20,10 +20,6 @@
     - Implement installtation from source command
     - Implement software reinstalltion command
     - Implement software uninstallation command
-    - Implement and test an *I/O abstraction layer
-        - Endianness handling functions
-        - Read/Write functions for raw buffers and strings
-        - Read/Write functions for the integer values of all sizes
 
 ### DONE:
     - ~~Create basic project structure~~
@@ -41,3 +37,5 @@
     - ~~Implement a basic commands system~~
     - Implement and test an *I/O abstraction layer
         - ~~Endianness handling functions~~
+        - ~~Read/Write functions for raw buffers and strings~~
+        - ~~Read/Write functions for the integer values of all sizes~~
