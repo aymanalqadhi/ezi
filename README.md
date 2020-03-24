@@ -28,7 +28,7 @@
 ### DONE:
     - ~~Create basic project structure~~
     - ~~Create "Hello, World!" main function~~
-    - ~~Implement common data structures~~
+    - Implement common data structures
         - ~~Implement Singly Linked-Lists~~
         - ~~Implement Hashs Table~~
     - Test the implemented data structures
@@ -39,3 +39,5 @@
     - ~~Replace `ptr == NULL', `ptr != NULL' expressions with `ptr', `!ptr'~~
     - ~~Move the startup logic to separate functions~~
     - ~~Implement a basic commands system~~
+    - Implement and test an *I/O abstraction layer
+        - ~~Endianness handling functions~~
