@@ -13,7 +13,11 @@ static const char *ezi_errors[EZI_ERRORS_COUNT] = {
     "Command return with an error",
     "Invalid command line arguments",
     "Could not parse arguments list",
-    "Initialization failed"
+    "Initialization failed",
+    "Could not open database source files",
+    "Could not write to file",
+    "Could not read from file",
+    "An End-of-file has been reached"
 };
 
 const char *
