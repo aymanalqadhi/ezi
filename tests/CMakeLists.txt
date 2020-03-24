@@ -11,7 +11,8 @@ add_subdirectory(Unity/)
 
 set(DS_SLIST_TESTS ds_slist_tests)
 set(DS_HASH_TABLE_TESTS ds_hash_table_tests)
-set(UTIL_ENDIANNESS_TESTS util_endian)
+set(IO_ENDIANNESS_TESTS io_endian_tests)
+set(IO_READ_WRITE_TESTS io_read_write)
 
 # Singly  Linked-List Tests
 add_executable(${DS_SLIST_TESTS} ds_slist_tests.c ../src/ds_slist.c
@@ -24,5 +25,10 @@ add_executable(${DS_HASH_TABLE_TESTS} ds_hash_table_tests.c
 target_link_libraries(${DS_HASH_TABLE_TESTS} unity)
 
 # Endianness tests
-add_executable(${UTIL_ENDIANNESS_TESTS} util_endian_tests.c ../src/util_endian.c)
-target_link_libraries(${UTIL_ENDIANNESS_TESTS} unity)
+add_executable(${IO_ENDIANNESS_TESTS} util_endian_tests.c ../src/io_endian.c)
+target_link_libraries(${IO_ENDIANNESS_TESTS} unity)
+
+# Read/Write Tests
+add_executable(${IO_READ_WRITE_TESTS} io_read_write_tests.c
+                                      ../src/io_read_write.c ../src/io_endian.c)
+target_link_libraries(${IO_READ_WRITE_TESTS} unity)
