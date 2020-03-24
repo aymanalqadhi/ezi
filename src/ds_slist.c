@@ -2,6 +2,7 @@
 
 #include "log/errno.h"
 #include "util/memory.h"
+#include "util/validation.h"
 
 #include <errno.h>
 #include <stdlib.h>
@@ -13,10 +14,7 @@ create_node(const void *data, size_t len);
 int
 init_ezi_slist(struct ezi_slist *sl, size_t element_size)
 {
-    if (!sl) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    }
+    CHECK_NULL_PARAMS_1(sl);
 
     sl->head         = NULL;
     sl->tail         = NULL;
@@ -31,11 +29,9 @@ ezi_slist_push_no_alloc(struct ezi_slist *sl, void *data)
 {
     struct ezi_slist_node *node;
 
-    if (!sl) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    } else if ((node = (struct ezi_slist_node *)calloc(1, sizeof(*node))) ==
-               NULL) {
+    CHECK_NULL_PARAMS_1(sl);
+
+    if (!(node = (struct ezi_slist_node *)calloc(1, sizeof(*node)))) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }
@@ -59,10 +55,9 @@ ezi_slist_push(struct ezi_slist *sl, const void *data)
 {
     void *tmp;
 
-    if (!sl || !data) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    } else if (!(tmp = ezi_memdup(data, sl->element_size))) {
+    CHECK_NULL_PARAMS_2(sl, data);
+
+    if (!(tmp = ezi_memdup(data, sl->element_size))) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }
@@ -113,10 +108,9 @@ ezi_slist_shift_no_alloc(struct ezi_slist *sl, void *data)
 {
     struct ezi_slist_node *node;
 
-    if (!sl) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    } else if ((node = (struct ezi_slist_node *)calloc(1, sizeof(*node))) ==
+    CHECK_NULL_PARAMS_1(sl);
+
+    if ((node = (struct ezi_slist_node *)calloc(1, sizeof(*node))) ==
                NULL) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
@@ -141,10 +135,9 @@ ezi_slist_shift(struct ezi_slist *sl, const void *data)
 {
     void *tmp;
 
-    if (!sl || !data) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    } else if (!(tmp = ezi_memdup(data, sl->element_size))) {
+    CHECK_NULL_PARAMS_2(sl, data);
+
+    if (!(tmp = ezi_memdup(data, sl->element_size))) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }

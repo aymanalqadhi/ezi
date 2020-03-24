@@ -3,6 +3,7 @@
 
 #include "log/errno.h"
 #include "util/memory.h"
+#include "util/validation.h"
 
 #include <errno.h>
 #include <stdlib.h>
@@ -26,10 +27,7 @@ init_ezi_hash_table(struct ezi_hash_table *ht,
 {
     int i;
 
-    if (!ht) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    }
+    CHECK_NULL_PARAMS_1(ht);
 
     buckets_count = buckets_count > 0 ? buckets_count
                                       : DEFAULT_HASH_TABLE_BUCKETS;
@@ -64,10 +62,9 @@ ezi_hash_table_get(struct ezi_hash_table *ht, const void *key, void **value_ptr)
     struct ezi_hash_table_entry *entry;
     struct ezi_slist_node *      node;
 
-    if (!ht || !key || !value_ptr) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    } else if (!ht->buckets) {
+    CHECK_NULL_PARAMS_3(ht, key, value_ptr);
+
+    if (!ht->buckets) {
         errno = EZI_ERR_UNINITIALIZED_DATA;
         return -1;
     } else if (ht->count == 0) {
@@ -99,10 +96,9 @@ ezi_hash_table_set(struct ezi_hash_table *ht,
     struct ezi_hash_table_entry *entry;
     struct ezi_slist_node *      node;
 
-    if (!ht || !key || !value) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    } else if (!ht->buckets) {
+    CHECK_NULL_PARAMS_3(ht, key, value);
+
+    if (!ht->buckets) {
         errno = EZI_ERR_UNINITIALIZED_DATA;
         return -1;
     }
@@ -144,10 +140,9 @@ ezi_hash_table_has_key(struct ezi_hash_table *ht, const void *key)
     struct ezi_hash_table_entry *entry;
     struct ezi_slist_node *      node;
 
-    if (!ht || !key) {
-        errno = EZI_ERR_NULL_ARGUMENTS;
-        return -1;
-    } else if (!ht->buckets) {
+    CHECK_NULL_PARAMS_2(ht, key);
+
+    if (!ht->buckets) {
         errno = EZI_ERR_UNINITIALIZED_DATA;
         return -1;
     }
