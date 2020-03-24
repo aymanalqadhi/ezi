@@ -62,7 +62,7 @@ ezi_slist_push_no_alloc(struct ezi_slist *sl, void *data);
  *
  * this function is the same as \see ezi_slist_push_no_alloc, but the data
  * gets copied into a malloced buffer
- * 
+ *
  * \param [in] sl    The list to push this item onto
  * \param [in] data  The item to push
  * \return 0 on success, -1 otherwise with errno set
@@ -95,7 +95,7 @@ ezi_slist_shift_no_alloc(struct ezi_slist *sl, void *data);
  *
  * this function is the same as \see ezi_slist_shift_no_alloc, but the data
  * gets copied into a malloced buffer
- * 
+ *
  * \param [in] sl    The list to insert this item into
  * \param [in] data  The item to insert
  * \return 0 on success, -1 otherwise with errno set
