@@ -42,7 +42,7 @@ test_hash_table_initialization(void)
     TEST_ASSERT_EQUAL(TEST_BUCKETS_COUNT, ht.buckets_count);
     TEST_ASSERT_NOT_NULL(ht.buckets);
 
-    free_hash_table(&ht);
+    free_ezi_hash_table(&ht);
 
     rc = init_ezi_hash_table(
         &ht, TEST_BUCKETS_COUNT, sizeof(double), sizeof(long long));
@@ -54,7 +54,7 @@ test_hash_table_initialization(void)
     TEST_ASSERT_EQUAL(TEST_BUCKETS_COUNT, ht.buckets_count);
     TEST_ASSERT_NOT_NULL(ht.buckets);
 
-    free_hash_table(&ht);
+    free_ezi_hash_table(&ht);
 
     rc = init_ezi_hash_table(
         &ht, TEST_BUCKETS_COUNT, sizeof(uint32_t), sizeof(char[0x100]));
@@ -66,7 +66,7 @@ test_hash_table_initialization(void)
     TEST_ASSERT_EQUAL(TEST_BUCKETS_COUNT, ht.buckets_count);
     TEST_ASSERT_NOT_NULL(ht.buckets);
 
-    free_hash_table(&ht);
+    free_ezi_hash_table(&ht);
 }
 
 static void
@@ -99,7 +99,7 @@ test_hash_table(void)
         TEST_ASSERT_EQUAL(value, *ret_val);
     }
 
-    free_hash_table(&ht);
+    free_ezi_hash_table(&ht);
 }
 
 int
