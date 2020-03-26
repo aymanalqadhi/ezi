@@ -22,6 +22,8 @@
 /* Gets the current length of the linked list */
 #define SLIST_COUNT(sl) ((sl)->count)
 
+typedef int (*ezi_slist_data_cmp)(const void *, const void *, const void *);
+
 struct ezi_slist_node
 {
     void *                 data;
@@ -113,6 +115,12 @@ ezi_slist_shift(struct ezi_slist *sl, const void *data);
  */
 void *
 ezi_slist_unshift(struct ezi_slist *sl);
+
+void *
+ezi_slist_remove(struct ezi_slist * sl,
+                 const void *       data,
+                 const void *       ctx,
+                 ezi_slist_data_cmp cmp);
 
 /*!
  * \brief Frees an list node

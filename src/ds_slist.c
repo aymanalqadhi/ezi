@@ -110,8 +110,7 @@ ezi_slist_shift_no_alloc(struct ezi_slist *sl, void *data)
 
     CHECK_NULL_PARAMS_1(sl);
 
-    if ((node = (struct ezi_slist_node *)calloc(1, sizeof(*node))) ==
-               NULL) {
+    if ((node = (struct ezi_slist_node *)calloc(1, sizeof(*node))) == NULL) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }
@@ -158,7 +157,7 @@ ezi_slist_unshift(struct ezi_slist *sl)
         sl->head   = node->next;
         node->next = NULL;
 
-        if (sl->count-- == 0) {
+        if (--sl->count == 0) {
             sl->head = sl->tail = NULL;
         }
 
@@ -168,6 +167,51 @@ ezi_slist_unshift(struct ezi_slist *sl)
         return tmp;
     }
 
+    return NULL;
+}
+
+void *
+ezi_slist_remove(struct ezi_slist * sl,
+                 const void *       data,
+                 const void *       ctx,
+                 ezi_slist_data_cmp cmp)
+{
+    void *                 tmp;
+    struct ezi_slist_node *node, *to_remove;
+
+    if (!sl || !data) {
+        errno = EZI_ERR_NULL_ARGUMENTS;
+        return NULL;
+    } else if (sl->count == 0) {
+        goto not_found;
+    } else if ((*cmp)(sl->head->data, data, ctx) == 0) {
+        if (!(tmp = ezi_slist_unshift(sl))) {
+            goto not_found;
+        }
+        return tmp;
+    } else if ((*cmp)(sl->tail->data, data, ctx) == 0) {
+        if (!(tmp = ezi_slist_pop(sl))) {
+            goto not_found;
+        }
+        return tmp;
+    } else {
+        SLIST_ITERATE(sl, node)
+        {
+            if ((*cmp)(node->data, data, ctx) == 0) {
+                to_remove  = node->next;
+                node->next = node->next->next;
+                --sl->count;
+
+                tmp = to_remove->data;
+                free(to_remove);
+
+                return tmp;
+            }
+        }
+    }
+
+not_found:
+    errno = EZI_ERR_NOT_FOUND;
     return NULL;
 }
 
