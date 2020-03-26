@@ -4,11 +4,18 @@
 
 #include <errno.h>
 #include <stddef.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define TEST_ITERATIONS 0x10000
 #define TEST_TYPE       size_t
 
 static struct ezi_slist sl;
+
+static int
+memcmp_wrapper(const void *a, const void *b, const void *sz) {
+    return memcmp(a, b, *(size_t *)sz);
+}
 
 void
 setUp(void)
@@ -126,6 +133,25 @@ test_slist_unshift(void)
     TEST_ASSERT(!sl.head && !sl.tail);
 }
 
+static void
+test_slist_remove(void)
+{
+    TEST_TYPE i, *val;
+    void *    removed;
+
+    test_slist_shift();
+
+    for (i = SLIST_COUNT(&sl); i > 0; --i) {
+        TEST_ASSERT_EQUAL(i, *SLIST_FIRST(&sl, TEST_TYPE *));
+        removed = ezi_slist_remove(&sl, &i, &sl.element_size, &memcmp_wrapper);
+        TEST_ASSERT_NOT_NULL(removed);
+        TEST_ASSERT_EQUAL(*(TEST_TYPE *)removed, i);
+        free(removed);
+    }
+
+    TEST_ASSERT(!sl.head && !sl.tail);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -136,6 +162,7 @@ main(int argc, char *argv[])
     RUN_TEST(&test_slist_pop);
     RUN_TEST(&test_slist_shift);
     RUN_TEST(&test_slist_unshift);
+    RUN_TEST(&test_slist_remove);
 
     return UNITY_END();
 }
