@@ -19,6 +19,12 @@ create_hash_table_entry(const void *key,
                         const void *value,
                         size_t      value_size);
 
+static inline void
+free_ezi_hash_table_entry(struct ezi_hash_table_entry *entry);
+
+static int
+compare_key(const void *k1, const void *k2, const void *sz);
+
 int
 init_ezi_hash_table(struct ezi_hash_table *ht,
                     size_t                 buckets_count,
@@ -63,11 +69,9 @@ ezi_hash_table_get(struct ezi_hash_table *ht, const void *key, void **value_ptr)
     struct ezi_slist_node *      node;
 
     CHECK_NULL_PARAMS_3(ht, key, value_ptr);
+    CHECK_UNINITIALIZED_DATA_1(ht->buckets);
 
-    if (!ht->buckets) {
-        errno = EZI_ERR_UNINITIALIZED_DATA;
-        return -1;
-    } else if (ht->count == 0) {
+    if (ht->count == 0) {
         *value_ptr = NULL;
         return 0;
     }
@@ -88,6 +92,29 @@ ezi_hash_table_get(struct ezi_hash_table *ht, const void *key, void **value_ptr)
 }
 
 int
+ezi_hash_table_has_key(struct ezi_hash_table *ht, const void *key)
+{
+    size_t                       hash;
+    struct ezi_hash_table_entry *entry;
+    struct ezi_slist_node *      node;
+
+    CHECK_NULL_PARAMS_2(ht, key);
+    CHECK_UNINITIALIZED_DATA_1(ht->buckets);
+
+    hash = (*ht->hash)(key, ht->key_size) % ht->buckets_count;
+
+    SLIST_ITERATE(ht->buckets + hash, node)
+    {
+        entry = (struct ezi_hash_table_entry *)node->data;
+        if (memcmp(key, entry->key, ht->key_size) == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int
 ezi_hash_table_set(struct ezi_hash_table *ht,
                    const void *           key,
                    const void *           value)
@@ -97,11 +124,7 @@ ezi_hash_table_set(struct ezi_hash_table *ht,
     struct ezi_slist_node *      node;
 
     CHECK_NULL_PARAMS_3(ht, key, value);
-
-    if (!ht->buckets) {
-        errno = EZI_ERR_UNINITIALIZED_DATA;
-        return -1;
-    }
+    CHECK_UNINITIALIZED_DATA_1(ht->buckets);
 
     hash = (*ht->hash)(key, ht->key_size) % ht->buckets_count;
 
@@ -134,30 +157,34 @@ new_entry:
 }
 
 int
-ezi_hash_table_has_key(struct ezi_hash_table *ht, const void *key)
+ezi_hash_table_remove(struct ezi_hash_table *ht, const void *key)
 {
-    size_t                       hash;
+    uint32_t                     hash;
     struct ezi_hash_table_entry *entry;
-    struct ezi_slist_node *      node;
+    struct ezi_slist_node *      node, *to_remove;
 
     CHECK_NULL_PARAMS_2(ht, key);
-
-    if (!ht->buckets) {
-        errno = EZI_ERR_UNINITIALIZED_DATA;
-        return -1;
-    }
+    CHECK_UNINITIALIZED_DATA_1(ht->buckets);
 
     hash = (*ht->hash)(key, ht->key_size) % ht->buckets_count;
 
-    SLIST_ITERATE(ht->buckets + hash, node)
-    {
-        entry = (struct ezi_hash_table_entry *)node->data;
-        if (memcmp(key, entry->key, ht->key_size) == 0) {
-            return 1;
-        }
-    }
+    if (ht->count == 0 || SLIST_COUNT(ht->buckets + hash) == 0) {
+        errno = EZI_ERR_NOT_FOUND;
+        return -1;
+    } else {
+        entry = (struct ezi_hash_table_entry *)ezi_slist_remove(
+            ht->buckets + hash, key, (const void *)&ht->key_size, &compare_key);
 
-    return 0;
+        if (!entry) {
+            return -1;
+        }
+
+        --ht->count;
+        free_ezi_hash_table_entry(entry);
+        free(entry);
+
+        return 0;
+    }
 }
 
 void
@@ -244,4 +271,17 @@ create_hash_table_entry(const void *key,
     }
 
     return entry;
+}
+
+static inline void
+free_ezi_hash_table_entry(struct ezi_hash_table_entry *entry)
+{
+    free(entry->key);
+    free(entry->value);
+}
+
+static int
+compare_key(const void *k1, const void *k2, const void *sz)
+{
+    return memcmp(((struct ezi_hash_table_entry *)k1)->key, k2, *(size_t *)sz);
 }

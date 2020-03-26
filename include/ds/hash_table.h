@@ -9,6 +9,13 @@
 #define DEFAULT_HASH_FUNCTION      ezi_fnv1a_hash
 #define DEFAULT_HASH_TABLE_BUCKETS 0x40
 
+/* Iterates the hash table items */
+#define HASH_TABLE_ITERATE(ht, bucket, node)                                   \
+    for (bucket = (ht)->buckets;                                               \
+         bucket != (ht)->buckets + (ht)->buckets_count;                        \
+         ++bucket)                                                             \
+    SLIST_ITERATE(bucket, node)
+
 typedef uint32_t (*hash_func)(const void *, size_t);
 
 struct ezi_hash_table_entry
@@ -35,6 +42,7 @@ struct ezi_hash_table
  * \param [in]     buckets_count The hash table buckets count
  * \param [in]     key_size      The size of the key of each entry
  * \param [in]     value_size    The size of the value of each entry
+ *
  * \return 0 on success, -1 otherwise with errno set
  */
 int
@@ -49,6 +57,7 @@ init_ezi_hash_table(struct ezi_hash_table *ht,
  * \param [in]  ht        A pointer to the hash table
  * \param [in]  key       A pointer to the key to be used
  * \param [out] value_ptr A pointer to the output pointer
+ *
  * \return 0 on success, -1 otherwise with errno set
  */
 int
@@ -61,6 +70,7 @@ ezi_hash_table_get(struct ezi_hash_table *ht,
  *
  * \param [in] ht    A pointer to hash table to check in
  * \parap [in] key   A pointer to the key to be checked
+ *
  * \return 1 If found, 0 if not, -1 for error with errno set
  */
 int
@@ -72,6 +82,7 @@ ezi_hash_table_has_key(struct ezi_hash_table *ht, const void *key);
  * \param [in]  ht    A pointer to the hash table to set the value into
  * \param [in]  key   A pointer to the key to use
  * \param [in]  value A pointer to the value to use (Can be NULL)
+ *
  * \return 0 on success, 1 if not found, -1 otherwise with errno set
  */
 int
@@ -84,6 +95,7 @@ ezi_hash_table_set(struct ezi_hash_table *ht,
  *
  * \param [in] ht   A pointer to the hash table which to remove the item from
  * \param [in] key  A pointer to the key of the item to be removed
+ *
  * \return 0 for success, -1 if the item was not found or error with errno set
  */
 int
@@ -102,7 +114,8 @@ free_ezi_hash_table(struct ezi_hash_table *ht);
  *
  * \param [in] data  The data to hash
  * \param [in] len   The length of the data
- * \return The computed hash
+ *
+ * \return The computed hash value
  */
 uint32_t
 ezi_fnv1a_hash(const void *data, size_t len);
@@ -112,7 +125,8 @@ ezi_fnv1a_hash(const void *data, size_t len);
  *
  * \param [in] data  The data to hash
  * \param [in] len   The length of the data
- * \return The computed hash
+ *
+ * \return The computed hash value
  */
 uint32_t
 ezi_adler32_hash(const void *data, size_t len);
@@ -122,7 +136,8 @@ ezi_adler32_hash(const void *data, size_t len);
  *
  * \param [in] data  The data to hash
  * \param [in] len   The length of the data
- * \return The computed hash
+ *
+ * \return The computed hash value
  */
 uint32_t
 ezi_djb_hash(const void *data, size_t len);
