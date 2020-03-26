@@ -9,11 +9,11 @@
 #include <stdlib.h>
 
 #define TEST_BUCKETS_COUNT 0x1000
-#define TEST_ITERATIONS    0x10000
+#define TEST_ITERATIONS    0x1000
 
-#define TEST_TYPE          size_t
-#define TEST_KEY_TYPE      size_t
-#define TEST_VALUE_TYPE    size_t
+#define TEST_TYPE       size_t
+#define TEST_KEY_TYPE   size_t
+#define TEST_VALUE_TYPE size_t
 
 struct ezi_hash_table ht;
 
@@ -85,13 +85,47 @@ test_hash_table(void)
 
     for (key = 1; key <= TEST_ITERATIONS; ++key) {
         value = rand();
-        rc    = ezi_hash_table_set(&ht, &key, &value);
+        /* Add an item */
+        rc = ezi_hash_table_set(&ht, &key, &value);
         TEST_ASSERT_EQUAL(0, rc);
         TEST_ASSERT_EQUAL(0, errno);
         TEST_ASSERT_EQUAL(key, ht.count);
+
+        /* Check the item existance */
         rc = ezi_hash_table_has_key(&ht, &key);
         TEST_ASSERT_EQUAL(1, rc);
         TEST_ASSERT_EQUAL(0, errno);
+
+        /* Check the stored value */
+        rc = ezi_hash_table_get(&ht, &key, (void **)&ret_val);
+        TEST_ASSERT_EQUAL(0, rc);
+        TEST_ASSERT_EQUAL(0, errno);
+        TEST_ASSERT_NOT_NULL(ret_val);
+        TEST_ASSERT_EQUAL(value, (void *)*ret_val);
+
+        /* Remove the item */
+        rc = ezi_hash_table_remove(&ht, &key);
+        TEST_ASSERT_EQUAL(0, rc);
+        TEST_ASSERT_EQUAL(0, errno);
+        TEST_ASSERT_EQUAL(key - 1, ht.count);
+
+        /* Check the item existance */
+        rc = ezi_hash_table_has_key(&ht, &key);
+        TEST_ASSERT_EQUAL(0, rc);
+        TEST_ASSERT_EQUAL(0, errno);
+
+        /* Re-add the item */
+        rc = ezi_hash_table_set(&ht, &key, &value);
+        TEST_ASSERT_EQUAL(0, rc);
+        TEST_ASSERT_EQUAL(0, errno);
+        TEST_ASSERT_EQUAL(key, ht.count);
+
+        /* Check the item existance */
+        rc = ezi_hash_table_has_key(&ht, &key);
+        TEST_ASSERT_EQUAL(1, rc);
+        TEST_ASSERT_EQUAL(0, errno);
+
+        /* Check the stored value */
         rc = ezi_hash_table_get(&ht, &key, (void **)&ret_val);
         TEST_ASSERT_EQUAL(0, rc);
         TEST_ASSERT_EQUAL(0, errno);
