@@ -26,10 +26,11 @@ static int
 compare_key(const void *k1, const void *k2, const void *sz);
 
 int
-init_ezi_hash_table(struct ezi_hash_table *ht,
-                    size_t                 buckets_count,
-                    size_t                 key_size,
-                    size_t                 value_size)
+init_ezi_hash_table_free(struct ezi_hash_table *ht,
+                         size_t                 buckets_count,
+                         size_t                 key_size,
+                         size_t                 value_size,
+                         free_func_t            free_func)
 {
     int i;
 
@@ -53,12 +54,23 @@ init_ezi_hash_table(struct ezi_hash_table *ht,
         }
     }
 
+    ht->free_func  = free_func;
     ht->count      = 0;
     ht->key_size   = key_size;
     ht->value_size = value_size;
-    ht->hash       = DEFAULT_HASH_FUNCTION;
+    ht->hash_func  = DEFAULT_HASH_FUNCTION;
 
     return 0;
+}
+
+inline int
+init_ezi_hash_table(struct ezi_hash_table *ht,
+                    size_t                 buckets_count,
+                    size_t                 key_size,
+                    size_t                 value_size)
+{
+    return init_ezi_hash_table_free(
+        ht, buckets_count, key_size, value_size, NULL);
 }
 
 int
@@ -76,7 +88,7 @@ ezi_hash_table_get(struct ezi_hash_table *ht, const void *key, void **value_ptr)
         return 0;
     }
 
-    hash = (ht->hash)(key, ht->key_size) % ht->buckets_count;
+    hash = (ht->hash_func)(key, ht->key_size) % ht->buckets_count;
 
     SLIST_ITERATE(ht->buckets + hash, node)
     {
@@ -101,7 +113,7 @@ ezi_hash_table_has_key(struct ezi_hash_table *ht, const void *key)
     CHECK_NULL_PARAMS_2(ht, key);
     CHECK_UNINITIALIZED_DATA_1(ht->buckets);
 
-    hash = (*ht->hash)(key, ht->key_size) % ht->buckets_count;
+    hash = (*ht->hash_func)(key, ht->key_size) % ht->buckets_count;
 
     SLIST_ITERATE(ht->buckets + hash, node)
     {
@@ -126,7 +138,7 @@ ezi_hash_table_set(struct ezi_hash_table *ht,
     CHECK_NULL_PARAMS_3(ht, key, value);
     CHECK_UNINITIALIZED_DATA_1(ht->buckets);
 
-    hash = (*ht->hash)(key, ht->key_size) % ht->buckets_count;
+    hash = (*ht->hash_func)(key, ht->key_size) % ht->buckets_count;
 
     if (SLIST_COUNT(ht->buckets + hash) == 0) {
         goto new_entry;
@@ -135,6 +147,9 @@ ezi_hash_table_set(struct ezi_hash_table *ht,
         {
             entry = (struct ezi_hash_table_entry *)node->data;
             if (memcmp(entry->key, key, ht->key_size) == 0) {
+                if (ht->free_func) {
+                    (*ht->free_func)(entry->value);
+                }
                 memcpy(entry->value, value, ht->value_size);
                 return 0;
             }
@@ -165,7 +180,7 @@ ezi_hash_table_remove(struct ezi_hash_table *ht, const void *key)
     CHECK_NULL_PARAMS_2(ht, key);
     CHECK_UNINITIALIZED_DATA_1(ht->buckets);
 
-    hash = (*ht->hash)(key, ht->key_size) % ht->buckets_count;
+    hash = (*ht->hash_func)(key, ht->key_size) % ht->buckets_count;
 
     if (ht->count == 0 || SLIST_COUNT(ht->buckets + hash) == 0) {
         errno = EZI_ERR_NOT_FOUND;
@@ -189,9 +204,17 @@ ezi_hash_table_remove(struct ezi_hash_table *ht, const void *key)
 void
 ezi_hash_table_clear(struct ezi_hash_table *ht)
 {
-    int i;
+    int                    i;
+    struct ezi_slist_node *node;
 
     for (i = 0; i < ht->buckets_count; ++i) {
+        if (ht->free_func) {
+            SLIST_ITERATE(ht->buckets + i, node)
+            {
+                (*ht->free_func)(
+                    ((struct ezi_hash_table_entry *)node->data)->value);
+            }
+        }
         ezi_slist_clear(ht->buckets + i);
     }
 
@@ -211,6 +234,11 @@ free_ezi_hash_table(struct ezi_hash_table *ht)
         {
             entry = (struct ezi_hash_table_entry *)node->data;
             free(entry->key);
+
+            if (ht->free_func) {
+                (*ht->free_func)(entry->value);
+            }
+
             free(entry->value);
         }
         free_ezi_slist(ht->buckets + ht->buckets_count);

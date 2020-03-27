@@ -22,20 +22,24 @@ init_ezi_software_database(struct ezi_software_database *db,
     db->installed.source = *installed;
     db->available.source = *available;
 
-    if (init_ezi_hash_table(&db->installed.data,
-                            DATABASE_TABLE_BUCKETS,
-                            EZI_SOFTWARE_MAX_NAME_LEN,
-                            sizeof(struct ezi_software)) != 0) {
+    if (init_ezi_hash_table_free(&db->installed.data,
+                                 DATABASE_TABLE_BUCKETS,
+                                 EZI_SOFTWARE_MAX_NAME_LEN,
+                                 sizeof(struct ezi_software),
+                                 (free_func_t)&free_ezi_software) != 0) {
         return -1;
     }
 
-    if (init_ezi_hash_table(&db->available.data,
-                            DATABASE_TABLE_BUCKETS,
-                            EZI_SOFTWARE_MAX_NAME_LEN,
-                            sizeof(struct ezi_software)) != 0) {
+    if (init_ezi_hash_table_free(&db->available.data,
+                                 DATABASE_TABLE_BUCKETS,
+                                 EZI_SOFTWARE_MAX_NAME_LEN,
+                                 sizeof(struct ezi_software),
+                                 (free_func_t)&free_ezi_software) != 0) {
         free_ezi_hash_table(&db->installed.data);
         return -1;
     }
+
+    db->inited = 1;
 
     return 0;
 }

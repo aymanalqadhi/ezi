@@ -16,7 +16,7 @@ ezi_software_read(struct ezi_software *sw, FILE *fp)
 {
     size_t   name_len, desc_len, url_len;
     uint16_t ndeps;
-    char     dep_name[sizeof(sw->name)];
+    char     dep_name[EZI_SOFTWARE_MAX_NAME_LEN + 1];
 
     CHECK_NULL_PARAMS_2(sw, fp);
 
@@ -30,17 +30,16 @@ ezi_software_read(struct ezi_software *sw, FILE *fp)
         ezi_fs_read_string(sw->description, &desc_len, fp) != 0 ||
         ezi_fs_read_string(sw->url, &url_len, fp) != 0 ||
         ezi_fs_read_uint16(&ndeps, fp) != 0 ||
-        init_ezi_slist(&sw->dependencies, sizeof(dep_name)) != 0) {
+        init_ezi_slist(&sw->dependencies, sizeof(dep_name) - 1) != 0) {
         errno = EZI_ERR_FILE_READ_FAILED;
         return -1;
     }
 
     while (ndeps--) {
-        name_len = sizeof(dep_name);
-        memset(dep_name, 0, sizeof(dep_name));
-
+        name_len = sizeof(dep_name) - 1;
+        memset(dep_name, 0, sizeof(dep_name) - 1);
         if (ezi_fs_read_string(dep_name, &name_len, fp) != 0 ||
-            ezi_slist_shift(&sw->dependencies, (const void *)&dep_name) != 0) {
+            ezi_slist_shift(&sw->dependencies, (const void *)dep_name) != 0) {
             free_ezi_software(sw);
             errno = EZI_ERR_FILE_READ_FAILED;
             return -1;
@@ -54,7 +53,6 @@ int
 ezi_software_write(const struct ezi_software *sw, FILE *fp)
 {
     struct ezi_slist_node *node;
-    struct ezi_software *  dep;
 
     CHECK_NULL_PARAMS_2(sw, fp);
 
@@ -68,8 +66,7 @@ ezi_software_write(const struct ezi_software *sw, FILE *fp)
 
     SLIST_ITERATE(&sw->dependencies, node)
     {
-        dep = (struct ezi_software *)node->data;
-        if (ezi_fs_write_string(dep->name, fp) != 0) {
+        if (ezi_fs_write_string((char *)node->data, fp) != 0) {
             errno = EZI_ERR_FILE_WRITE_FAILED;
             return -1;
         }
@@ -77,6 +74,7 @@ ezi_software_write(const struct ezi_software *sw, FILE *fp)
 
     return 0;
 }
+
 int
 ezi_software_decode(struct ezi_software *sw, const void *buf, size_t *len)
 {

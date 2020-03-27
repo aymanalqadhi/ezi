@@ -16,7 +16,8 @@
          ++bucket)                                                             \
     SLIST_ITERATE(bucket, node)
 
-typedef uint32_t (*hash_func)(const void *, size_t);
+typedef uint32_t (*hash_func_t)(const void *, size_t);
+typedef void (*free_func_t)(void *data);
 
 struct ezi_hash_table_entry
 {
@@ -32,8 +33,27 @@ struct ezi_hash_table
     size_t value_size;
 
     struct ezi_slist *buckets;
-    hash_func         hash;
+    hash_func_t       hash_func;
+    free_func_t       free_func;
 };
+
+/*!
+ * \brief Initializes a generic hash table with a spcific element size
+ *
+ * \param [in,out] ht            A pointer to the hash table to initialize
+ * \param [in]     buckets_count The hash table buckets count
+ * \param [in]     key_size      The size of the key of each entry
+ * \param [in]     value_size    The size of the value of each entry
+ * \param [in]     free_func     A pointer to items freeing function
+ *
+ * \return 0 on success, -1 otherwise with errno set
+ */
+int
+init_ezi_hash_table_free(struct ezi_hash_table *ht,
+                         size_t                 buckets_count,
+                         size_t                 key_size,
+                         size_t                 value_size,
+                         free_func_t            free_func);
 
 /*!
  * \brief Initializes a generic hash table with a spcific element size
