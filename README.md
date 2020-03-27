@@ -9,18 +9,11 @@
         - Test the Doubly Linked-List Implementation
         - Test the Dynamic Arrays Implementation
         - Test the Binary Trees Implementation
-    - Define and parse command line arguments (50%)
-    - Improve the implementation of the implemented data structures
-    - Implement basic database functionality
-    - Implement deletion on the implemented data structures
     - Implement installation setup command
     - Implement installation from url command
-    - Implement available software browsing command
-    - Implement installed software browsing command
     - Implement installtation from source command
     - Implement software reinstalltion command
     - Implement software uninstallation command
-    - Use the new NULL arguments validation macros
 
 ### DONE:
     - ~~Create basic project structure~~
@@ -40,3 +33,10 @@
         - ~~Endianness handling functions~~
         - ~~Read/Write functions for raw buffers and strings~~
         - ~~Read/Write functions for the integer values of all sizes~~
+    - ~~Implement available software browsing command~~
+    - ~~Implement installed software browsing command~~
+    - ~~Use the new NULL arguments validation macros~~
+    - ~~Implement deletion on the implemented data structures~~
+    - ~~Implement basic database functionality~~
+    - ~~Define and parse command line arguments~~
+    - ~~Improve the implementation of the implemented data structures~~
