@@ -25,14 +25,24 @@ init_ezi_software_source_fs(struct ezi_software_source *src,
 {
     CHECK_NULL_PARAMS_2(src, filename);
 
-    if (!(src->source_fp = fopen(filename, "r+")) &&
-        !(src->source_fp = fopen(filename, "w+"))) {
-        errno = EZI_ERR_SRC_FILE_OPEN_FAILED;
-        return -1;
-    }
+    if (!(src->source_fp = fopen(filename, "r+"))) {
+        if (!(src->source_fp = fopen(filename, "w+"))) {
+            errno = EZI_ERR_SRC_FILE_OPEN_FAILED;
+            return -1;
+        }
 
-    src->metadata.version  = version;
-    src->metadata.checksum = src->metadata.last_update = 0;
+        src->metadata.version   = version;
+        src->metadata.checksum  = src->metadata.last_update =
+            src->metadata.count = 0;
+
+            if (write_source_metadata(src))
+        {
+            errno = EZI_ERR_FILE_WRITE_FAILED;
+            return -1;
+        }
+
+        rewind(src->source_fp);
+    }
 
     return errno = 0;
 }
@@ -83,7 +93,7 @@ ezi_software_source_load(struct ezi_software_source *src,
         }
     }
 
-    fseek(src->source_fp, 0, SEEK_SET);
+    rewind(src->source_fp);
     return 0;
 }
 
@@ -122,7 +132,7 @@ ezi_software_source_save(struct ezi_software_source *src,
         }
     }
 
-    fseek(src->source_fp, 0, SEEK_SET);
+    rewind(src->source_fp);
     return 0;
 }
 
