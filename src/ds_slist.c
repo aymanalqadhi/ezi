@@ -215,6 +215,21 @@ not_found:
     return NULL;
 }
 
+void
+ezi_slist_clear(struct ezi_slist *sl)
+{
+    struct ezi_slist_node *ptr, *tmp;
+
+    for (ptr = sl->head; ptr;) {
+        tmp = ptr;
+        ptr = ptr->next;
+        free_ezi_slist_node(tmp);
+    }
+
+    sl->head = sl->tail = NULL;
+    sl->count = 0;
+}
+
 inline void
 free_ezi_slist_node(struct ezi_slist_node *node)
 {

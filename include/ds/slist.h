@@ -123,6 +123,14 @@ ezi_slist_remove(struct ezi_slist * sl,
                  ezi_slist_data_cmp cmp);
 
 /*!
+ * \breif Clears a singly linked-list pointed to by \see sl items
+ *
+ * \param [in,out]  sl  A pointer to the singly linked list to to be cleared
+ */
+void
+ezi_slist_clear(struct ezi_slist *sl);
+
+/*!
  * \brief Frees an list node
  *
  * \param [in]  The node to free
