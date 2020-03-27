@@ -19,6 +19,6 @@
 #define COLOR_BMAGENTA "\033[35;1m"
 #define COLOR_BCYAN    "\033[36;1m"
 
-#define COLORED(str, color) (color str COLOR_RESET)
+#define COLORED(str, color) color str COLOR_RESET
 
 #endif /* EZDB_LOG_COLORS_H */
