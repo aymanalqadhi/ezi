@@ -35,8 +35,7 @@ init_ezi_software_source_fs(struct ezi_software_source *src,
         src->metadata.checksum  = src->metadata.last_update =
             src->metadata.count = 0;
 
-            if (write_source_metadata(src))
-        {
+        if (write_source_metadata(src)) {
             errno = EZI_ERR_FILE_WRITE_FAILED;
             return -1;
         }
