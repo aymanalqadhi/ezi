@@ -4,11 +4,22 @@
 #include "ds/slist.h"
 
 #include <stddef.h>
+#include <stdint.h>
+
+#define EZI_CONFIG_INSTALLED_TABLE  "/tmp/ezi-installed-%04d.db"
+#define EZI_CONFIG_AVAILABLE_TABLE  "/tmp/ezi-available-%04d.db"
+#define EZI_CONFIG_DATABASE_VERSION 1
 
 struct ezi_config
 {
-    const char *exec_name;
+    int    argc;
+    char **argv;
+
     const char *command;
+    const char *installed_table_fmt;
+    const char *available_table_fmt;
+
+    uint32_t database_version;
 
     struct ezi_slist command_args;
 };
