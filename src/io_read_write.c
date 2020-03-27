@@ -9,10 +9,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#define CHECK_EOF(fp)\
-    if (feof(fp)) {\
-        errno = EZI_ERR_FILE_EOF_REACHED;\
-        return -1;\
+#define CHECK_EOF(fp)                                                          \
+    if (feof(fp)) {                                                            \
+        errno = EZI_ERR_FILE_EOF_REACHED;                                      \
+        return -1;                                                             \
     }
 
 int
@@ -141,14 +141,13 @@ ezi_fs_read_string(char *buf, size_t *len, FILE *fp)
         return -1;
     }
 
-    if (*len > (size_t)(to_read = ezi_betoh32(to_read))) {
-        if (ezi_fs_read(buf, to_read, fp) != 0) {
-            return -1;
-        }
+    to_read = to_read < *len ? to_read : *len;
 
-        *len = to_read;
-        return 0;
-    } else {
-        return ezi_fs_read(buf, *len, fp);
+    if (ezi_fs_read(buf, to_read, fp) != 0) {
+        return -1;
     }
+
+    buf[(*len = to_read)] = '\0';
+
+    return 0;
 }
