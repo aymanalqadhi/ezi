@@ -17,6 +17,7 @@ struct ezi_software_database
 {
     struct ezi_software_table installed;
     struct ezi_software_table available;
+    unsigned int              inited : 1;
 };
 
 /*!
@@ -80,7 +81,7 @@ ezi_software_table_insert(struct ezi_software_table *tbl,
 int
 ezi_software_table_get(struct ezi_software_table *tbl,
                        const char *               name,
-                       struct ezi_software **      sw);
+                       struct ezi_software **     sw);
 
 /*!
  * \brief Removes an item which name is specified with \see name from a

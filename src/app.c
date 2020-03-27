@@ -44,6 +44,9 @@ ezi_app_run(int argc, char *argv[])
         return -1;
     }
 
+    log_debug(
+        "app", "Executing command `%s' (%s)", config.command, cmd->display_name);
+
     if ((*cmd->func)(&command_ctx, &config.command_args) != 0) {
         errno = EZI_ERR_COMMAND_ERROR_RETURN;
         return -1;
@@ -57,7 +60,10 @@ ezi_app_destroy(void)
 {
     free_ezi_config(&config);
     free_ezi_hash_table(&commands);
-    free_ezi_software_database(&db);
+
+    if (db.inited) {
+        free_ezi_software_database(&db);
+    }
 }
 
 static int
@@ -73,6 +79,8 @@ init_app(int argc, char *argv[])
                             sizeof(struct ezi_command)) != 0) {
         return -1;
     }
+
+    db.inited = 0;
 
     log_debug("app", "Opening installed software table");
     snprintf(fnbuf,
