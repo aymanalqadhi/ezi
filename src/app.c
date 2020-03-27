@@ -21,6 +21,9 @@ get_command(const char *name);
 static int
 add_command(const char *name, const struct ezi_command *cmd);
 
+static int
+init_app(int argc, char *argv[]);
+
 int
 ezi_app_run(int argc, char *argv[])
 {
@@ -28,17 +31,9 @@ ezi_app_run(int argc, char *argv[])
                                                   .get_command = &get_command };
     const struct ezi_command *    cmd;
 
-    if (ezi_config_parse_argv(&config, argc, argv) != 0 ||
-        init_ezi_hash_table(&commands,
-                            COMMANDS_HT_BUCKETS,
-                            sizeof(char[COMMAND_MAX_NAME_LEN]),
-                            sizeof(struct ezi_command)) != 0) {
-        log_perror("app", "ezi_config_parse_argv");
-        errno = EZI_ERR_INITIALIZATION_FAILED;
+    if (init_app(argc, argv) != 0) {
         return -1;
     }
-
-    export_known_commands(&add_command);
 
     if (!(cmd = get_command(config.command))) {
         errno = EZI_ERR_NO_SUCH_COMMAND;
@@ -58,6 +53,23 @@ ezi_app_destroy(void)
 {
     free_ezi_config(&config);
     free_ezi_hash_table(&commands);
+}
+
+static int
+init_app(int argc, char *argv[])
+{
+    if (ezi_config_parse_argv(&config, argc, argv) != 0 ||
+        init_ezi_hash_table(&commands,
+                            COMMANDS_HT_BUCKETS,
+                            sizeof(char[COMMAND_MAX_NAME_LEN]),
+                            sizeof(struct ezi_command)) != 0) {
+        log_perror("app", "ezi_config_parse_argv");
+        errno = EZI_ERR_INITIALIZATION_FAILED;
+        return -1;
+    }
+
+    export_known_commands(&add_command);
+    return 0;
 }
 
 static const struct ezi_command *
