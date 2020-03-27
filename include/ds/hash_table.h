@@ -102,6 +102,14 @@ int
 ezi_hash_table_remove(struct ezi_hash_table *ht, const void *key);
 
 /*!
+ * \brief Clears a hash table pointed to by \see ht items
+ *
+ * \param [in,out]  ht  A pointer to the hash table which to be cleared
+ */
+void
+ezi_hash_table_clear(struct ezi_hash_table *ht);
+
+/*!
  * \brief Frees the resources used by the hash table
  *
  * \param [in]  ht  A pointer to the hash table

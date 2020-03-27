@@ -161,7 +161,6 @@ ezi_hash_table_remove(struct ezi_hash_table *ht, const void *key)
 {
     uint32_t                     hash;
     struct ezi_hash_table_entry *entry;
-    struct ezi_slist_node *      node, *to_remove;
 
     CHECK_NULL_PARAMS_2(ht, key);
     CHECK_UNINITIALIZED_DATA_1(ht->buckets);
@@ -171,20 +170,32 @@ ezi_hash_table_remove(struct ezi_hash_table *ht, const void *key)
     if (ht->count == 0 || SLIST_COUNT(ht->buckets + hash) == 0) {
         errno = EZI_ERR_NOT_FOUND;
         return -1;
-    } else {
-        entry = (struct ezi_hash_table_entry *)ezi_slist_remove(
-            ht->buckets + hash, key, (const void *)&ht->key_size, &compare_key);
-
-        if (!entry) {
-            return -1;
-        }
-
-        --ht->count;
-        free_ezi_hash_table_entry(entry);
-        free(entry);
-
-        return 0;
     }
+
+    entry = (struct ezi_hash_table_entry *)ezi_slist_remove(
+        ht->buckets + hash, key, (const void *)&ht->key_size, &compare_key);
+
+    if (!entry) {
+        return -1;
+    }
+
+    --ht->count;
+    free_ezi_hash_table_entry(entry);
+    free(entry);
+
+    return 0;
+}
+
+void
+ezi_hash_table_clear(struct ezi_hash_table *ht)
+{
+    int i;
+
+    for (i = 0; i < ht->buckets_count; ++i) {
+        ezi_slist_clear(ht->buckets + i);
+    }
+
+    ht->count = 0;
 }
 
 void
