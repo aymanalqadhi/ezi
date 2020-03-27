@@ -110,7 +110,7 @@ ezi_slist_shift_no_alloc(struct ezi_slist *sl, void *data)
 
     CHECK_NULL_PARAMS_1(sl);
 
-    if ((node = (struct ezi_slist_node *)calloc(1, sizeof(*node))) == NULL) {
+    if (!(node = (struct ezi_slist_node *)calloc(1, sizeof(*node)))) {
         errno = EZI_ERR_MEMORY_ALLOC_FAILED;
         return -1;
     }
