@@ -1,6 +1,8 @@
 #ifndef EZI_LOG_ERRNO_H
 #define EZI_LOG_ERRNO_H
 
+#include <errno.h>
+
 enum ezi_error
 {
     EZI_ERR_FIRST_MARKER = 0x1000 - 1,
@@ -9,6 +11,7 @@ enum ezi_error
     EZI_ERR_NULL_ARGUMENTS,
     EZI_ERR_MEMORY_ALLOC_FAILED,
     EZI_ERR_UNINITIALIZED_DATA,
+    EZI_ERR_NOT_FOUND,
 
     /* Command Errors */
     EZI_ERR_NO_SUCH_COMMAND,
@@ -20,9 +23,10 @@ enum ezi_error
     EZI_ERR_INITIALIZATION_FAILED,
 
     /* Data Errors */
-    EZI_ERR_SRC_FILES_OPEN_FAILED,
+    EZI_ERR_SRC_FILE_OPEN_FAILED,
 
     /* I/O Errors */
+    EZI_ERR_FILE_OPEN_FAILED,
     EZI_ERR_FILE_WRITE_FAILED,
     EZI_ERR_FILE_READ_FAILED,
     EZI_ERR_FILE_EOF_REACHED,
