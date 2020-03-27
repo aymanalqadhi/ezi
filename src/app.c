@@ -63,10 +63,10 @@ ezi_app_destroy(void)
 static const struct ezi_command *
 get_command(const char *name)
 {
-    char                name_buf[COMMAND_MAX_NAME_LEN] = { 0 };
+    char                name_buf[COMMAND_MAX_NAME_LEN + 1] = { 0 };
     struct ezi_command *command;
 
-    strncpy(name_buf, name, sizeof(name_buf));
+    strncpy(name_buf, name, sizeof(name_buf) - 1);
 
     if (ezi_hash_table_get(&commands, (void *)name_buf, (void **)&command) !=
         0) {
@@ -80,9 +80,9 @@ get_command(const char *name)
 static int
 add_command(const char *name, const struct ezi_command *cmd)
 {
-    char name_buf[COMMAND_MAX_NAME_LEN] = { 0 };
+    char name_buf[COMMAND_MAX_NAME_LEN + 1] = { 0 };
 
-    strncpy(name_buf, name, sizeof(name_buf));
+    strncpy(name_buf, name, sizeof(name_buf) - 1);
     return ezi_hash_table_set(
         &commands, (const void *)name_buf, (const void *)cmd);
 }
