@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define EZI_CONFIG_INSTALLED_TABLE  "/tmp/ezi-installed-%04d.db"
-#define EZI_CONFIG_AVAILABLE_TABLE  "/tmp/ezi-available-%04d.db"
+#define EZI_CONFIG_INSTALLED_TABLE  ".ezi-installed-%04d.db"
+#define EZI_CONFIG_AVAILABLE_TABLE  ".ezi-available-%04d.db"
 #define EZI_CONFIG_DATABASE_VERSION 1
 
 struct ezi_config

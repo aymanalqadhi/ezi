@@ -1,7 +1,8 @@
 #include "config.h"
-#include "log/errno.h"
 
 #include "ds/slist.h"
+#include "log/errno.h"
+#include "util/validation.h"
 
 #include <errno.h>
 #include <stddef.h>
@@ -10,6 +11,8 @@ int
 ezi_config_parse_argv(struct ezi_config *cfg, int argc, char *argv[])
 {
     int i;
+
+    CHECK_NULL_PARAMS_2(cfg, argv);
 
     if (argc < 2) {
         errno = EZI_ERR_CONFIG_INVALID_ARGS;
