@@ -43,7 +43,7 @@ OBJECT_EXT   ?= o
 # Compiler Variables
 CC           := gcc
 CC_FLAGS     := -c -I$(INCLUDE_DIR) -Wall -pedantic -D_POSIX_C_SOURCE=200809
-LINK_FLAGS   :=
+LINK_FLAGS   := -lm -lcurl -larchive
 
 # Validate build type, and set the compilation flags
 ifeq ($(BUILD_TYPE), Release)
