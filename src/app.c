@@ -48,6 +48,7 @@ ezi_app_run(int argc, char *argv[])
         "app", "Executing command `%s' (%s)", config.command, cmd->display_name);
 
     if ((*cmd->func)(&command_ctx, &config.command_args) != 0) {
+        log_perror("app", cmd->display_name);
         errno = EZI_ERR_COMMAND_ERROR_RETURN;
         return -1;
     }
