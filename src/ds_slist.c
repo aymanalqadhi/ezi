@@ -12,7 +12,9 @@ static inline struct ezi_slist_node *
 create_node(const void *data, size_t len);
 
 int
-init_ezi_slist(struct ezi_slist *sl, size_t element_size)
+init_ezi_slist_free(struct ezi_slist *sl,
+                    size_t            element_size,
+                    free_func_t       free_func)
 {
     CHECK_NULL_PARAMS_1(sl);
 
@@ -20,8 +22,15 @@ init_ezi_slist(struct ezi_slist *sl, size_t element_size)
     sl->tail         = NULL;
     sl->count        = 0;
     sl->element_size = element_size;
+    sl->free_func    = free_func;
 
     return 0;
+}
+
+int
+init_ezi_slist(struct ezi_slist *sl, size_t element_size)
+{
+    return init_ezi_slist_free(sl, element_size, NULL);
 }
 
 int
@@ -174,7 +183,7 @@ void *
 ezi_slist_remove(struct ezi_slist * sl,
                  const void *       data,
                  const void *       ctx,
-                 ezi_slist_data_cmp cmp)
+                 ezi_slist_data_cmp_t cmp)
 {
     void *                 tmp;
     struct ezi_slist_node *node, *to_remove;
@@ -223,11 +232,16 @@ ezi_slist_clear(struct ezi_slist *sl)
     for (ptr = sl->head; ptr;) {
         tmp = ptr;
         ptr = ptr->next;
+
+        if (sl->free_func) {
+            (*sl->free_func)(tmp->data);
+        }
+
         free_ezi_slist_node(tmp);
     }
 
     sl->head = sl->tail = NULL;
-    sl->count = 0;
+    sl->count           = 0;
 }
 
 inline void
@@ -245,6 +259,11 @@ free_ezi_slist(struct ezi_slist *sl)
     for (ptr = sl->head; ptr;) {
         tmp = ptr;
         ptr = ptr->next;
+
+        if (sl->free_func) {
+            (*sl->free_func)(tmp->data);
+        }
+
         free_ezi_slist_node(tmp);
     }
 

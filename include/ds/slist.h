@@ -22,7 +22,8 @@
 /* Gets the current length of the linked list */
 #define SLIST_COUNT(sl) ((sl)->count)
 
-typedef int (*ezi_slist_data_cmp)(const void *, const void *, const void *);
+typedef void (*free_func_t)(void *);
+typedef int (*ezi_slist_data_cmp_t)(const void *, const void *, const void *);
 
 struct ezi_slist_node
 {
@@ -37,6 +38,7 @@ struct ezi_slist
 
     struct ezi_slist_node *head;
     struct ezi_slist_node *tail;
+    free_func_t            free_func;
 };
 
 /*!
@@ -44,6 +46,22 @@ struct ezi_slist
  *
  * \param [in,out] sl            A pointer to the list to initialize
  * \param [in]     element_size  The element size to use
+ * \param [in]     free_func     A pointer to the function which to use when
+ *                               freeing the list
+ *
+ * \return 0 on success, -1 otherwise with errno set
+ */
+int
+init_ezi_slist_free(struct ezi_slist *sl,
+                    size_t            element_size,
+                    free_func_t       free_func);
+
+/*!
+ * \brief Initializes a generic singly-linked-list with a specific element size
+ *
+ * \param [in,out] sl            A pointer to the list to initialize
+ * \param [in]     element_size  The element size to use
+ *
  * \return 0 on success, -1 otherwise with errno set
  */
 int
@@ -54,6 +72,7 @@ init_ezi_slist(struct ezi_slist *sl, size_t element_size);
  *
  * \param [in] sl    The list to push this item onto
  * \param [in] data  The item to push
+ *
  * \return 0 on success, -1 otherwise with errno set
  */
 int
@@ -67,6 +86,7 @@ ezi_slist_push_no_alloc(struct ezi_slist *sl, void *data);
  *
  * \param [in] sl    The list to push this item onto
  * \param [in] data  The item to push
+ *
  * \return 0 on success, -1 otherwise with errno set
  */
 int
@@ -77,6 +97,7 @@ ezi_slist_push(struct ezi_slist *sl, const void *data);
  *        The returned item MUST be freed manually along with its data.
  *
  * \param [in] sl  The list to pop the item from
+ *
  * \return The poped item, NULL if the list is empty
  */
 void *
@@ -87,6 +108,7 @@ ezi_slist_pop(struct ezi_slist *sl);
  *
  * \param [in] sl    The list to insert this item into
  * \param [in] data  The item to insert
+ *
  * \return 0 on success, -1 otherwise with errno set
  */
 int
@@ -111,6 +133,7 @@ ezi_slist_shift(struct ezi_slist *sl, const void *data);
  *        its data.
  *
  * \param [in] sl  The list to remove the item from
+ *
  * \return The removed item, NULL if the list is empty
  */
 void *
@@ -120,7 +143,7 @@ void *
 ezi_slist_remove(struct ezi_slist * sl,
                  const void *       data,
                  const void *       ctx,
-                 ezi_slist_data_cmp cmp);
+                 ezi_slist_data_cmp_t cmp);
 
 /*!
  * \breif Clears a singly linked-list pointed to by \see sl items
