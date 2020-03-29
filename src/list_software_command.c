@@ -76,7 +76,7 @@ list_software_command_exec(const struct ezi_command_ctx *ctx,
     return 0;
 
 invalid_args:
-    errno = EZI_ERR_CONFIG_INVALID_ARGS;
+    errno = EZI_ERR_COMMAND_INVALID_ARGS;
     return -1;
 }
 
