@@ -85,7 +85,7 @@ ezi_hash_table_get(struct ezi_hash_table *ht, const void *key, void **value_ptr)
 
     if (ht->count == 0) {
         *value_ptr = NULL;
-        return 0;
+        return -1;
     }
 
     hash = (ht->hash_func)(key, ht->key_size) % ht->buckets_count;
@@ -100,7 +100,7 @@ ezi_hash_table_get(struct ezi_hash_table *ht, const void *key, void **value_ptr)
     }
 
     *value_ptr = NULL;
-    return 0;
+    return -1;
 }
 
 int
