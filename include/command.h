@@ -35,6 +35,8 @@ struct ezi_command_ctx
 extern struct ezi_command echo_command;
 extern struct ezi_command add_software_command;
 extern struct ezi_command list_software_command;
+extern struct ezi_command install_software_command;
+extern struct ezi_command show_usage_command;
 
 void
 export_known_commands(add_command_func add_cmd);
