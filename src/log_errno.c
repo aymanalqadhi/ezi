@@ -12,6 +12,7 @@ static const char *ezi_errors[EZI_ERRORS_COUNT] = {
     "No items were found",
     "No such command",
     "Command return with an error",
+    "Invalid command arguments",
     "Invalid command line arguments",
     "Could not parse arguments list",
     "Initialization failed",
@@ -19,7 +20,10 @@ static const char *ezi_errors[EZI_ERRORS_COUNT] = {
     "Could not open file",
     "Could not write to file",
     "Could not read from file",
-    "An End-of-file has been reached"
+    "An End-of-file has been reached",
+    "Could not download file",
+    "Could not compile regular expression",
+    "No Matches were found for the regular expression"
 };
 
 const char *
